@@ -11,11 +11,13 @@ public class MiaScript : MonoBehaviour
     public LayerMask groundMask;
     public float mouseSensitivity = 100f;
     private Rigidbody rb;
+    private Animator animator;
     private bool isGrounded = true;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -29,6 +31,8 @@ public class MiaScript : MonoBehaviour
         Vector3 movement = (transform.right * horizontalInput + transform.forward * verticalInput).normalized;
         movement = movement * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + movement);
+
+        animator.SetFloat("Speed", (Mathf.Abs(movement.x) + Mathf.Abs(movement.z)) * moveSpeed);
 
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
