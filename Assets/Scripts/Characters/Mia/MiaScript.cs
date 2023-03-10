@@ -19,6 +19,7 @@ public class MiaScript : MonoBehaviour
     private CharacterController controller;
     private Vector3 playerVelocity;
     private bool groundedPlayer;
+    private bool crouch;
     private float gravityValue = -9.81f;
 
     void Start()
@@ -26,6 +27,7 @@ public class MiaScript : MonoBehaviour
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
+        crouch = false;
         composer = GameObject.FindGameObjectWithTag("MainCamera").GetComponentInChildren<CinemachineRecomposer>();
     }
 
@@ -36,6 +38,12 @@ public class MiaScript : MonoBehaviour
         {
             playerVelocity.y = 0f;
             animator.SetBool("Jump", false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            crouch = !crouch;
+            animator.SetBool("Crouched", crouch);
         }
 
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
