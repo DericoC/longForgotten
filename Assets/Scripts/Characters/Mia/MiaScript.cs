@@ -1,46 +1,92 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Cinemachine;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public class MiaScript : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float jumpForce = 10f;
-    public float groundDistance = 0.4f;
-    public LayerMask groundMask;
-    public float mouseSensitivity = 100f;
-    private Rigidbody rb;
+    [SerializeField] float playerSpeed = 2.0f;
+    [SerializeField] float jumpHeight = 1.0f;
+    [SerializeField] float mouseSensitivity;
+    [SerializeField] LayerMask groundMask;
+    private float horizontalMove;
+    private float verticalMove;
     private Animator animator;
-    private bool isGrounded = true;
+    private CinemachineRecomposer composer;
+    private Vector3 move;
+    private CharacterController controller;
+    private Vector3 playerVelocity;
+    private bool groundedPlayer;
+    private float gravityValue = -9.81f;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
+        composer = GameObject.FindGameObjectWithTag("MainCamera").GetComponentInChildren<CinemachineRecomposer>();
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundMask);
-
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float verticalInput = Input.GetAxisRaw("Vertical");
-
-        Vector3 movement = (transform.right * horizontalInput + transform.forward * verticalInput).normalized;
-        movement = movement * moveSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(rb.position + movement);
-
-        animator.SetFloat("Speed", (Mathf.Abs(movement.x) + Mathf.Abs(movement.z)) * moveSpeed);
-
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        groundedPlayer = groundCheck();
+        if (groundedPlayer && playerVelocity.y < 0)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            playerVelocity.y = 0f;
+            animator.SetBool("Jump", false);
         }
 
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.fixedDeltaTime;
+        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+        controller.Move(transform.TransformDirection(move * playerSpeed * Time.deltaTime));
 
+        if (Input.GetButtonDown("Jump") && groundedPlayer)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+
+            if (move.magnitude >= 0.5)
+            {
+                animator.SetBool("Jump", true);
+            } else
+            {
+                animator.SetTrigger("StillJump");
+            }
+        }
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
+        animator.SetFloat("Speed", move.magnitude);
+
+        mouseControl();
+    }
+
+    void mouseControl()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.fixedDeltaTime;
         transform.Rotate(Vector3.up * mouseX);
+        float mouseY = -(Input.GetAxis("Mouse Y") * mouseSensitivity * Time.fixedDeltaTime);
+        composer.m_Tilt += mouseY;
+
+        if (composer.m_Tilt >= 40)
+        {
+            composer.m_Tilt = 40;
+        }
+        else if (composer.m_Tilt <= -40)
+        {
+            composer.m_Tilt = -40;
+        }
+    }
+
+    bool groundCheck()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, 0.1f, groundMask))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
