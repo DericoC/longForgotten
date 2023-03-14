@@ -5,6 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - Floor
+  - DoorOpenText
+  - Door1
+  - Door2
+  - Door3
+  - Door4
+  - Door5
   layers:
   - Default
   - TransparentFX

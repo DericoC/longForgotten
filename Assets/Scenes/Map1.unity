@@ -925,10 +925,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mia Bikini Standalone
       objectReference: {fileID: 0}
-    - target: {fileID: 7377429878542826365, guid: 350157cfeae1a174ba935cd08864b10d, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 350157cfeae1a174ba935cd08864b10d, type: 3}
 --- !u!4 &343743207 stripped
@@ -1206,7 +1202,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437754931}
   m_LocalRotation: {x: 0.34042525, y: 0.000000022879128, z: -0.000000008283386, w: 0.9402717}
-  m_LocalPosition: {x: -0.6504458, y: 2.5, z: -1.7462254}
+  m_LocalPosition: {x: -0.6504459, y: 2.5, z: -1.7462254}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
