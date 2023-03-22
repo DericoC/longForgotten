@@ -1,10 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.HID;
 
-public class GunBehavior : MonoBehaviour
+// Gun behavior for pistols
+public class PistolBehavior : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] GunData gunData;
@@ -52,11 +51,6 @@ public class GunBehavior : MonoBehaviour
         }
     }
 
-    private void OnGunShot()
-    {
-        throw new NotImplementedException();
-    }
-
     public void StartReloading()
     {
         if (!gunData.reloading)
@@ -73,6 +67,6 @@ public class GunBehavior : MonoBehaviour
 
         gunData.currentAmmo = gunData.magSize;
 
-        gunData.reloading = false; 
+        gunData.reloading = false;
     }
 }
