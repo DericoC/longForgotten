@@ -452,7 +452,7 @@ Transform:
   m_Children:
   - {fileID: 5015359400330469140}
   m_Father: {fileID: 6866281232927612883}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &646612786778605541
 GameObject:
@@ -962,7 +962,7 @@ Transform:
   m_Children:
   - {fileID: 4718636113044195999}
   m_Father: {fileID: 6866281232927612883}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1245406940829260016
 GameObject:
@@ -1592,7 +1592,7 @@ Transform:
   m_Children:
   - {fileID: 2794155794965791673}
   m_Father: {fileID: 6866281232927612883}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2175384561826678756
 GameObject:
@@ -1801,6 +1801,7 @@ GameObject:
   - component: {fileID: 8774794649889638273}
   - component: {fileID: 7377429878542826365}
   - component: {fileID: 343743209}
+  - component: {fileID: 1119605468087631677}
   m_Layer: 0
   m_Name: Mia Bikini Standalone
   m_TagString: Player
@@ -1864,9 +1865,11 @@ MonoBehaviour:
   playerSpeed: 2
   jumpHeight: 1
   mouseSensitivity: 100
+  playerCurrency: 200
   groundMask:
     serializedVersion: 2
     m_Bits: 64
+  activeInventoryItem: {fileID: 0}
 --- !u!143 &343743209
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1885,6 +1888,20 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.05, z: 0}
+--- !u!114 &1119605468087631677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2384391187930405096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a416bcf861ca14e9ba1c8c9de445ff9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reloadKey: 114
+  state: 0
 --- !u!1 &2435459634577890402
 GameObject:
   m_ObjectHideFlags: 0
@@ -3721,7 +3738,7 @@ Transform:
   m_Children:
   - {fileID: 8113013512343740990}
   m_Father: {fileID: 6866281232927612883}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5364304561732041836
 GameObject:
@@ -4424,6 +4441,37 @@ Transform:
   m_Father: {fileID: 1183252102158349975}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6389046966243784501
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 561773206776415814}
+  m_Layer: 0
+  m_Name: inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &561773206776415814
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6389046966243784501}
+  m_LocalRotation: {x: 0.67597127, y: 0.24094193, z: 0.29824102, w: 0.6293347}
+  m_LocalPosition: {x: 0.139, y: -0.16329998, z: 0.0673}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6866281232927612883}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6498879157812177968
 GameObject:
   m_ObjectHideFlags: 0
@@ -5001,7 +5049,7 @@ Transform:
   m_Children:
   - {fileID: 1183252102158349975}
   m_Father: {fileID: 6866281232927612883}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7215290769082583857
 GameObject:
@@ -6544,6 +6592,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 561773206776415814}
   - {fileID: 8095447085445769271}
   - {fileID: 4857453635818695959}
   - {fileID: 477170272619928580}

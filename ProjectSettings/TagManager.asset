@@ -11,6 +11,8 @@ TagManager:
   - Door3
   - Door4
   - Door5
+  - Rifle
+  - Pistol
   layers:
   - Default
   - TransparentFX
