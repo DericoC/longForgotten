@@ -1,136 +1,241 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cinemachine;
 using UnityEngine;
 
 public class MiaScript : MonoBehaviour
 {
-    [SerializeField] private float playerSpeed = 2.0f;
-    [SerializeField] private float jumpHeight = 1.0f;
-    [SerializeField] private float mouseSensitivity;
-    [SerializeField] private int playerCurrency = 200;
+    [Header("Reference to GameObjects")]
     [SerializeField] private LayerMask groundMask;
-
-    // START - Inventory Control
-    private List<GameObject> inventory = new List<GameObject>();
-    public GameObject activeInventoryItem = null;
-    private int activeIsPrimary = 0; //0:Hands 1:Primary 2:Secondary
-    private RuntimeAnimatorController rifleAnimator;
-    private RuntimeAnimatorController noItemAnimator;
-    private bool emptyInventory = true;
-    // END - Inventory Control
-
-    private bool[] keys;
-    private float horizontalMove;
-    private float verticalMove;
-    private Animator animator;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private WeaponManager weaponManager;
     private CinemachineRecomposer composer;
-    private Vector3 move;
-    private CharacterController controller;
-    private Vector3 playerVelocity;
-    private bool dCheck = false;
-    private bool groundedPlayer;
-    private bool crouch;
-    private float gravityValue = -9.81f;
-    private bool isPressingDoorOpen = false;
-    private PlayerShoot playerShoot;
+    private CharacterController playerController;
     private LogicController logicController;
+    private Animator playerAnimator;
+
+    [Header("Movement")]
+    [SerializeField] private float crouchSpeed = 2.0f;
+    [SerializeField] private float walkSpeed = 3.0f;
+    [SerializeField] private float runSpeed = 6.0f;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float jumpHeight = 1.0f;
+    private float horizontalInput;
+    private float verticalInput;
+    private Vector3 moveDirection;
+    private bool isCrouching;
+
+    [Header("Keycodes")]
+    public KeyCode runKey = KeyCode.LeftShift;
+    public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode crouchKey = KeyCode.LeftControl;
+    public KeyCode reloadKey = KeyCode.R;
+
+    [Header("Mouse configuration")]
+    [SerializeField] private float mouseSensitivity;
+
+    [Header("inGame items / vars")]
+    [SerializeField] private int playerCurrency = 200;
+    private bool[] keys;
+    private bool isPressingDoorOpen = false;
+    private bool dCheck = false;
+
+    [Header("Inventory Controll")]
+    public GameObject[] weapons; // Inventory holding weapons (melee, primary, secondary)
+    public int currentWeapon = 0; // 0: Melee, 1: Primary, 2: Secondary
+    public GameObject activeInventoryItem = null;
+
+    [Header ("Camera")]
+    private Camera mainCamera;
+
+    [Header("External forces")]
+    public float gravity = -9.81f;
+    private Vector3 fallVelocity;
+
+    [Header ("Ground check")]
+    private bool isGrounded;
+    public float groundDistance = 0.5f;
+
+    [Header ("Verification states")]
+    [SerializeField] private MovementState mState;
+    [SerializeField] private WeaponState wState;
+
+    public enum MovementState
+    {
+        walking,
+        running,
+        airbone,
+        crouching,
+        idle
+    }
+
+    public enum WeaponState
+    {
+        melee,
+        weapon,
+        aiming,
+        shooting,
+        reload
+    }
 
     void Start()
     {
+        // GameObjects
+        playerController = GetComponent<CharacterController>();
+        playerAnimator = GetComponent<Animator>();
+        weaponManager = GetComponentInChildren<WeaponManager>();
+        weaponManager.ActivateWeapon(currentWeapon);
         logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
-        playerShoot = GetComponent<PlayerShoot>();
-        rifleAnimator = Resources.Load<RuntimeAnimatorController>("Mia/w Rifle/MiaAnimatorWithRifle");
-        noItemAnimator = Resources.Load<RuntimeAnimatorController>("Mia/MiaAnimator");
-        controller = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
+
+        // Camera
+        mainCamera = Camera.main;
+        composer = mainCamera.GetComponentInChildren<CinemachineRecomposer>();
+
+        // Inventory
+        LoadKeys();
+
+        // Gameplay
         Cursor.lockState = CursorLockMode.Locked;
-        crouch = false;
-        composer = GameObject.FindGameObjectWithTag("MainCamera").GetComponentInChildren<CinemachineRecomposer>();
-        checkForInventory();
-        playerShoot.gunChange(activeInventoryItem);
-        emptyInventory = inventory.Count == 0;
-        loadKeys();
+        isCrouching = false;
+
+        // Animator
+        UpdateAnimatorController();
+    }
+
+    void FixedUpdate()
+    {
+        if (!logicController.Pause)
+        {
+            PlayerMovement();
+            SpeedControl();
+            GroundControll();
+            PlayerJump();
+            SwitchWeapons();
+            HandleWeaponAnimations();
+        }
     }
 
     void Update()
     {
+
         if (!logicController.Pause)
         {
-            if (Input.GetMouseButton(1) && playerShoot.HasGun)
-            {
-                animator.SetBool("IsAiming", true);
-                playerShoot.IsAiming = true;
-            }
-            else
-            {
-                animator.SetBool("IsAiming", false);
-                playerShoot.IsAiming = false;
-            }
-
-            if (!emptyInventory)
-            {
-                changeWeapon();
-            }
-
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                isPressingDoorOpen = true;
-                maintainDoorInteraction(1f);
-            }
-
-            groundedPlayer = groundCheck(); d();
-            if (groundedPlayer && playerVelocity.y < 0)
-            {
-                playerVelocity.y = 0f;
-                animator.SetBool("Jump", false);
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                crouch = !crouch;
-                animator.SetBool("Crouched", crouch);
-            }
-
-            Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
-
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                move = new Vector3(Input.GetAxis("Horizontal") * 2f, 0, Input.GetAxis("Vertical") * 2f);
-            }
-
-            controller.Move(transform.TransformDirection(move * playerSpeed * Time.deltaTime));
-
-            if (Input.GetButtonDown("Jump") && groundedPlayer)
-            {
-                playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-
-                if (move.magnitude >= 0.5)
-                {
-                    animator.SetBool("Jump", true);
-                }
-                else
-                {
-                    animator.SetTrigger("StillJump");
-                }
-            }
-
-            playerVelocity.y += gravityValue * Time.deltaTime;
-            controller.Move(playerVelocity * Time.deltaTime);
-
-            if (move.z < 0)
-            {
-                animator.SetFloat("Speed", -move.magnitude);
-            }
-            else
-            {
-                animator.SetFloat("Speed", move.magnitude);
-            }
-            mouseControl();
+            StateHandler();
+            MouseControll();
+            PlayerCrouch();
+            DoorController();
         }
     }
 
-    void mouseControl()
+    #region Movement
+    void PlayerMovement()
+    {
+        // Movement
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
+
+        // To walk in the direction looking at
+        moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0f,
+                                            Input.GetAxis("Vertical")).normalized;
+
+        playerController.Move(transform.TransformDirection(moveDirection
+                            * moveSpeed * Time.deltaTime));
+    }
+
+    void StateHandler()
+    {
+        // Mode - Idle
+        if (horizontalInput == 0 && verticalInput == 0 && !Input.GetKey(runKey))
+        {
+            mState = MovementState.idle;
+            moveSpeed = walkSpeed;
+            playerAnimator.SetBool("Run", false);
+            playerAnimator.ResetTrigger("Jump");
+
+            playerAnimator.SetFloat("XSpeed", 0);
+            playerAnimator.SetFloat("YSpeed", 0);
+
+            if (!isGrounded && Input.GetKey(jumpKey))
+            {
+                mState = MovementState.airbone;
+                playerAnimator.SetBool("Jump", true);
+
+            }
+        }
+        // Mode - running
+        else if (isGrounded && Input.GetKey(runKey))
+        {
+            mState = MovementState.running;
+            moveSpeed = runSpeed;
+            playerAnimator.ResetTrigger("Jump");
+
+            playerAnimator.SetBool("Run", true);
+
+            playerAnimator.SetFloat("XSpeed", moveDirection.x);
+            playerAnimator.SetFloat("YSpeed", moveDirection.z);
+        }
+        // Mode - walking
+        else if (isGrounded && (horizontalInput != 0 || verticalInput != 0))
+        {
+            mState = MovementState.walking;
+            moveSpeed = walkSpeed;
+            playerAnimator.SetBool("Run", false);
+            playerAnimator.ResetTrigger("Jump");
+
+            playerAnimator.SetFloat("XSpeed", moveDirection.x);
+            playerAnimator.SetFloat("YSpeed", moveDirection.z);
+
+        }
+        // Mode - air
+        else if (!isGrounded)
+        {
+            mState = MovementState.airbone;
+            playerAnimator.SetTrigger("Jump");
+        }
+        // Mode - crouching
+        else if (!isCrouching)
+        {
+            mState = MovementState.crouching;
+            moveSpeed = crouchSpeed;
+            playerAnimator.ResetTrigger("Jump");
+
+            playerAnimator.SetBool("Crouch", true);
+
+            playerAnimator.SetFloat("XSpeed", moveDirection.x);
+            playerAnimator.SetFloat("YSpeed", moveDirection.z);
+        }
+    }
+
+    void PlayerJump()
+    {
+        if (Input.GetKeyDown(jumpKey) && isGrounded)
+        {
+            fallVelocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+
+        if (Input.GetKeyDown(jumpKey) && isGrounded && Input.GetKeyDown(runKey))
+        {
+            fallVelocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            playerAnimator.SetFloat("YSpeed", 0); // Esto deberia contrarrestar
+                                                  // el movimiento que hace el anim
+        }
+    }
+
+    void PlayerCrouch()
+    {
+        if (Input.GetKeyDown(crouchKey))
+        {
+            isCrouching = !isCrouching;
+        }
+    }
+
+    // For gravity and after jump
+    private void SpeedControl()
+    {
+        fallVelocity.y += gravity * Time.deltaTime;
+        playerController.Move(fallVelocity * Time.deltaTime);
+    }
+
+    void MouseControll()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.fixedDeltaTime;
         transform.Rotate(Vector3.up * mouseX);
@@ -147,18 +252,26 @@ public class MiaScript : MonoBehaviour
         }
     }
 
-    bool groundCheck()
+    void GroundControll()
     {
-        return Physics.Raycast(transform.position, Vector3.down, 0.1f, groundMask);
-    }
+        bool wasGrounded = isGrounded;
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-    private async void maintainDoorInteraction(float delaySeconds)
+        if (isGrounded && !wasGrounded && fallVelocity.y < 0)
+        {
+            fallVelocity.y = -2f;
+        }
+    }
+    #endregion Movement
+
+    #region Doors
+    private async void MaintainDoorInteraction(float delaySeconds)
     {
         await Task.Delay((int)(delaySeconds * 1000));
         isPressingDoorOpen = false;
     }
 
-    public void doorInteraction(DoorControl door)
+    public void DoorInteraction(DoorControl door)
     {
         if (door != null)
         {
@@ -173,7 +286,7 @@ public class MiaScript : MonoBehaviour
                 {
                     if (door.HasKey)
                     {
-                        if (countKeys() >= 1)
+                        if (CountKeys() >= 1)
                         {
                             door.destroyDoor(keys);
                         }
@@ -191,7 +304,7 @@ public class MiaScript : MonoBehaviour
         }
     }
 
-    void loadKeys()
+    void LoadKeys()
     {
         keys = new bool[5];
         keys[0] = false;
@@ -201,7 +314,7 @@ public class MiaScript : MonoBehaviour
         keys[4] = false;
     }
 
-    int countKeys()
+    int CountKeys()
     {
         int count = 0;
         for (int i = 0; i < keys.Length; i++)
@@ -214,152 +327,103 @@ public class MiaScript : MonoBehaviour
         return count;
     }
 
-    void d()
+    void DoorController()
+    {
+        // Doors
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            isPressingDoorOpen = true;
+            MaintainDoorInteraction(1f);
+        }
+    }
+
+    void D()
     {
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             dCheck = !dCheck;
-            animator.SetBool("D", dCheck);
+            playerAnimator.SetBool("D", dCheck);
+        }
+    }
+    #endregion Doors
+
+    #region Weapons
+    private void SwitchWeapons()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1) && currentWeapon != 0)
+        {
+            SetCurrentWeapon(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && currentWeapon != 1)
+        {
+            SetCurrentWeapon(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && currentWeapon != 2)
+        {
+            SetCurrentWeapon(2);
         }
     }
 
-    void checkForInventory()
+    private void SetCurrentWeapon(int weaponIndex)
     {
-        bool hasRifle = false;
-        GameObject rightHandInventory = GameObject.Find("inventory");
-
-        if (rightHandInventory.transform.childCount > 0)
+        if (weaponManager.GetActiveWeapon(weaponIndex) != null)
         {
-            for (int i = 0; i < rightHandInventory.transform.childCount; i++)
-            {
-                inventory.Add(rightHandInventory.transform.GetChild(i).gameObject);
-                if (rightHandInventory.transform.GetChild(i).gameObject.activeInHierarchy && rightHandInventory.transform.GetChild(i).gameObject.tag == "Rifle")
-                {
-                    hasRifle = true;
-                    activeInventoryItem = rightHandInventory.transform.GetChild(i).gameObject;
-                }
-            }
+            currentWeapon = weaponIndex;
+            weaponManager.ActivateWeapon(currentWeapon);
+            UpdateAnimatorController();
         }
-
-        animator.runtimeAnimatorController = hasRifle ? rifleAnimator : noItemAnimator;
     }
 
-    void changeWeapon()
+    private void UpdateAnimatorController()
     {
-        int keyPressed = 0;
-        if (Input.GetKeyDown(KeyCode.Alpha1)) //Change to Primary
-        {
-            if (inventory.Count >= 1 && inventory[0] != null)
-            {
-                if (activeIsPrimary == 1)
-                {
-                    activeInventoryToNull();
-                }
-                else
-                {
-                    activeInventoryItem = inventory[0];
-                    activeIsPrimary = 1;
-                    playerShoot.HasGun = true;
-                }
-            }
-            else
-            {
-                activeInventoryToNull();
-            }
-            keyPressed = 1;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2)) // Change to Secondary
-        {
-            keyPressed = 2;
-            if (inventory.Count >= 2 && inventory[1] != null)
-            {
-                if (activeIsPrimary == 2)
-                {
-                    activeInventoryToNull();
-                }
-                else
-                {
-                    activeInventoryItem = inventory[1];
-                    activeIsPrimary = 2;
-                    playerShoot.HasGun = true;
-                }
-            }
-            else
-            {
-                activeInventoryToNull();
-            }
-        }
+        playerAnimator.SetLayerWeight(1, currentWeapon == 0 ? 0 : 1);
+    }
 
-        // Change Inventory Status
-        if (keyPressed != 0)
+    private void HandleWeaponAnimations()
+    {
+        // Melee or no weapon
+        if (currentWeapon == 0)
         {
-            if (activeInventoryItem == null)
+            wState = WeaponState.melee;
+            if (Input.GetMouseButtonDown(0))
             {
-                inventoryOverride(false); // Hide weapons
-                animator.runtimeAnimatorController = noItemAnimator;
-            }
-            else
-            {
-                if (keyPressed == 1 && activeInventoryItem.tag == "Rifle")
-                {
-                    animator.runtimeAnimatorController = rifleAnimator;
-                    toggleInvPrimary(true);
-                }
-                else if (keyPressed == 1 && activeInventoryItem.tag == "Pistol")
-                {
-                    //animator.runtimeAnimatorController = pistolAnimator;
-                    toggleInvPrimary(true);
-                }
-                else if (keyPressed == 2 && activeInventoryItem.tag == "Rifle")
-                {
-                    animator.runtimeAnimatorController = rifleAnimator;
-                    toggleInvPrimary(false);
-                }
-                else if (keyPressed == 2 && activeInventoryItem.tag == "Pistol")
-                {
-                    //animator.runtimeAnimatorController = pistolAnimator;
-                    toggleInvPrimary(false);
-                }
+                playerAnimator.SetTrigger("Punch");
             }
         }
+        // Has a firearm or weapon
         else
         {
-            playerShoot.HasGun = true;
+            // Shooting
+            wState = WeaponState.weapon;
+            if (Input.GetMouseButtonDown(0))
+            {
+                wState = WeaponState.shooting;
+                playerAnimator.SetTrigger("Shooting");
+            }
+            // Aiming
+            else if (Input.GetMouseButtonDown(1))
+            {
+                wState = WeaponState.aiming;
+                playerAnimator.SetBool("isAiming", true);
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    wState = WeaponState.shooting;
+                    playerAnimator.SetTrigger("Shooting");
+                }
+            }
+            // Reload
+            else if (Input.GetKey(reloadKey))
+            {
+                wState = WeaponState.reload;
+                playerAnimator.SetTrigger("Reload");
+            }
+            // Running
+            else if (isGrounded && Input.GetKey(runKey))
+            {
+                playerAnimator.SetBool("Run", true);
+            }
         }
     }
-
-    void toggleInvPrimary(bool on)
-    {
-        if (inventory.Count >= 2 && inventory[1] != null)
-        {
-            inventory[1].SetActive(!on);
-        }
-        if (inventory[0] != null)
-        {
-            inventory[0].SetActive(on);
-        }
-    }
-
-    void inventoryOverride(bool o)
-    {
-        if (inventory.Count >= 2 && inventory[1] != null)
-        {
-            inventory[1].SetActive(o);
-        }
-        if (inventory[0] != null)
-        {
-            inventory[0].SetActive(o);
-        }
-    }
-
-    void activeInventoryToNull()
-    {
-        activeInventoryItem = null;
-        activeIsPrimary = 0;
-        playerShoot.HasGun = false;
-    }
-
-    // Getters / Setters
-    public bool EmptyInventory { get => emptyInventory; set => emptyInventory = value; }
-    public float PlayerSpeed { get => playerSpeed; set => playerSpeed = value; }
+    #endregion Weapons
 }

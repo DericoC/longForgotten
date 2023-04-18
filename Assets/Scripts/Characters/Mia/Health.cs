@@ -41,7 +41,7 @@ public class Health : MonoBehaviour
             animator.SetTrigger("Hit");
             lives -= damage;
             StartCoroutine(Protect());
-            StartCoroutine(StopVelocity());
+            //StartCoroutine(StopVelocity());
         }
     }
 
@@ -68,11 +68,11 @@ public class Health : MonoBehaviour
         _protected = false;
     }
 
-    IEnumerator StopVelocity()
-    {
-        var actualVelocity = GetComponent<MiaScript>().PlayerSpeed;
-        GetComponent<MiaScript>().PlayerSpeed = 0;
-        yield return new WaitForSeconds(waitTime);
-        GetComponent<MiaScript>().PlayerSpeed = actualVelocity;
-    }
+    //IEnumerator StopVelocity()
+    //{
+    //    var actualVelocity = GetComponent<MiaScript>().PlayerSpeed;
+    //    GetComponent<MiaScript>().PlayerSpeed = 0;
+    //    yield return new WaitForSeconds(waitTime);
+    //    GetComponent<MiaScript>().PlayerSpeed = actualVelocity;
+    //}
 }

@@ -89,7 +89,7 @@ public class DoorControl : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            player.doorInteraction(gameObject.GetComponent<DoorControl>());
+            player.DoorInteraction(gameObject.GetComponent<DoorControl>());
         }
     }
 
