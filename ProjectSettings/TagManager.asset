@@ -13,6 +13,11 @@ TagManager:
   - Door5
   - Rifle
   - Pistol
+  - Cross
+  - Logic
+  - GameOver
+  - Pause
+  - Virtual Camera
   layers:
   - Default
   - TransparentFX

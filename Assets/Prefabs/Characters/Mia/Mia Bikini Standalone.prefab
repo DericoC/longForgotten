@@ -1802,6 +1802,7 @@ GameObject:
   - component: {fileID: 7377429878542826365}
   - component: {fileID: 343743209}
   - component: {fileID: 1119605468087631677}
+  - component: {fileID: -7952609827338255433}
   m_Layer: 0
   m_Name: Mia Bikini Standalone
   m_TagString: Player
@@ -1902,6 +1903,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reloadKey: 114
   state: 0
+--- !u!114 &-7952609827338255433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2384391187930405096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e180370a291241339927c0621c64ece, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lives: 3
+  _protected: 0
+  protectedTime: 1
+  waitTime: 0.2
+  dead: 0
 --- !u!1 &2435459634577890402
 GameObject:
   m_ObjectHideFlags: 0

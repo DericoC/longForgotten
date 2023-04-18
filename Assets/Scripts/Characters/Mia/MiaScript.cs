@@ -34,9 +34,11 @@ public class MiaScript : MonoBehaviour
     private float gravityValue = -9.81f;
     private bool isPressingDoorOpen = false;
     private PlayerShoot playerShoot;
+    private LogicController logicController;
 
     void Start()
     {
+        logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
         playerShoot = GetComponent<PlayerShoot>();
         rifleAnimator = Resources.Load<RuntimeAnimatorController>("Mia/w Rifle/MiaAnimatorWithRifle");
         noItemAnimator = Resources.Load<RuntimeAnimatorController>("Mia/MiaAnimator");
@@ -53,72 +55,79 @@ public class MiaScript : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(1))
+        if (!logicController.Pause)
         {
-            animator.SetBool("IsAiming", true);
-        } else
-        {
-            animator.SetBool("IsAiming", false);
-        }
-
-        if (!emptyInventory)
-        {
-            changeWeapon();
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            isPressingDoorOpen = true;
-            maintainDoorInteraction(1f);
-        }
-
-        groundedPlayer = groundCheck(); d();
-        if (groundedPlayer && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0f;
-            animator.SetBool("Jump", false);
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            crouch = !crouch;
-            animator.SetBool("Crouched", crouch);
-        }
-
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
-        
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            move = new Vector3(Input.GetAxis("Horizontal") * 2f, 0, Input.GetAxis("Vertical") * 2f);
-        }
-
-        controller.Move(transform.TransformDirection(move * playerSpeed * Time.deltaTime));
-
-        if (Input.GetButtonDown("Jump") && groundedPlayer)
-        {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-
-            if (move.magnitude >= 0.5)
+            if (Input.GetMouseButton(1) && playerShoot.HasGun)
             {
-                animator.SetBool("Jump", true);
-            } else
-            {
-                animator.SetTrigger("StillJump");
+                animator.SetBool("IsAiming", true);
+                playerShoot.IsAiming = true;
             }
-        }
+            else
+            {
+                animator.SetBool("IsAiming", false);
+                playerShoot.IsAiming = false;
+            }
 
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+            if (!emptyInventory)
+            {
+                changeWeapon();
+            }
 
-        if (move.z < 0)
-        {
-            animator.SetFloat("Speed", -move.magnitude);
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                isPressingDoorOpen = true;
+                maintainDoorInteraction(1f);
+            }
+
+            groundedPlayer = groundCheck(); d();
+            if (groundedPlayer && playerVelocity.y < 0)
+            {
+                playerVelocity.y = 0f;
+                animator.SetBool("Jump", false);
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                crouch = !crouch;
+                animator.SetBool("Crouched", crouch);
+            }
+
+            Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                move = new Vector3(Input.GetAxis("Horizontal") * 2f, 0, Input.GetAxis("Vertical") * 2f);
+            }
+
+            controller.Move(transform.TransformDirection(move * playerSpeed * Time.deltaTime));
+
+            if (Input.GetButtonDown("Jump") && groundedPlayer)
+            {
+                playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+
+                if (move.magnitude >= 0.5)
+                {
+                    animator.SetBool("Jump", true);
+                }
+                else
+                {
+                    animator.SetTrigger("StillJump");
+                }
+            }
+
+            playerVelocity.y += gravityValue * Time.deltaTime;
+            controller.Move(playerVelocity * Time.deltaTime);
+
+            if (move.z < 0)
+            {
+                animator.SetFloat("Speed", -move.magnitude);
+            }
+            else
+            {
+                animator.SetFloat("Speed", move.magnitude);
+            }
+            mouseControl();
         }
-        else
-        {
-            animator.SetFloat("Speed", move.magnitude);
-        }
-        mouseControl();
     }
 
     void mouseControl()
@@ -221,7 +230,8 @@ public class MiaScript : MonoBehaviour
 
         if (rightHandInventory.transform.childCount > 0)
         {
-            for (int i = 0; i < rightHandInventory.transform.childCount; i++) {
+            for (int i = 0; i < rightHandInventory.transform.childCount; i++)
+            {
                 inventory.Add(rightHandInventory.transform.GetChild(i).gameObject);
                 if (rightHandInventory.transform.GetChild(i).gameObject.activeInHierarchy && rightHandInventory.transform.GetChild(i).gameObject.tag == "Rifle")
                 {
@@ -251,7 +261,8 @@ public class MiaScript : MonoBehaviour
                     activeIsPrimary = 1;
                     playerShoot.HasGun = true;
                 }
-            } else
+            }
+            else
             {
                 activeInventoryToNull();
             }
@@ -265,13 +276,15 @@ public class MiaScript : MonoBehaviour
                 if (activeIsPrimary == 2)
                 {
                     activeInventoryToNull();
-                } else
+                }
+                else
                 {
                     activeInventoryItem = inventory[1];
                     activeIsPrimary = 2;
                     playerShoot.HasGun = true;
                 }
-            } else
+            }
+            else
             {
                 activeInventoryToNull();
             }
@@ -291,20 +304,27 @@ public class MiaScript : MonoBehaviour
                 {
                     animator.runtimeAnimatorController = rifleAnimator;
                     toggleInvPrimary(true);
-                } else if (keyPressed == 1 && activeInventoryItem.tag == "Pistol")
+                }
+                else if (keyPressed == 1 && activeInventoryItem.tag == "Pistol")
                 {
                     //animator.runtimeAnimatorController = pistolAnimator;
                     toggleInvPrimary(true);
-                } else if (keyPressed == 2 && activeInventoryItem.tag == "Rifle")
+                }
+                else if (keyPressed == 2 && activeInventoryItem.tag == "Rifle")
                 {
                     animator.runtimeAnimatorController = rifleAnimator;
                     toggleInvPrimary(false);
-                } else if (keyPressed == 2 && activeInventoryItem.tag == "Pistol")
+                }
+                else if (keyPressed == 2 && activeInventoryItem.tag == "Pistol")
                 {
                     //animator.runtimeAnimatorController = pistolAnimator;
                     toggleInvPrimary(false);
                 }
             }
+        }
+        else
+        {
+            playerShoot.HasGun = true;
         }
     }
 
@@ -341,4 +361,5 @@ public class MiaScript : MonoBehaviour
 
     // Getters / Setters
     public bool EmptyInventory { get => emptyInventory; set => emptyInventory = value; }
+    public float PlayerSpeed { get => playerSpeed; set => playerSpeed = value; }
 }
