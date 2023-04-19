@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -40,9 +41,8 @@ public class MiaScript : MonoBehaviour
     private bool dCheck = false;
 
     [Header("Inventory Controll")]
-    public GameObject[] weapons; // Inventory holding weapons (melee, primary, secondary)
     public int currentWeapon = 0; // 0: Melee, 1: Primary, 2: Secondary
-    public GameObject activeInventoryItem = null;
+    public float speedMultiplier = 1.0f;
 
     [Header ("Camera")]
     private Camera mainCamera;
@@ -79,23 +79,13 @@ public class MiaScript : MonoBehaviour
 
     void Start()
     {
-        // GameObjects
-        playerController = GetComponent<CharacterController>();
-        playerAnimator = GetComponent<Animator>();
-        weaponManager = GetComponentInChildren<WeaponManager>();
-        weaponManager.ActivateWeapon(currentWeapon);
-        logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
-
-        // Camera
-        mainCamera = Camera.main;
-        composer = mainCamera.GetComponentInChildren<CinemachineRecomposer>();
+        CacheComponents();
 
         // Inventory
         LoadKeys();
 
         // Gameplay
         Cursor.lockState = CursorLockMode.Locked;
-        isCrouching = false;
 
         // Animator
         UpdateAnimatorController();
@@ -107,26 +97,41 @@ public class MiaScript : MonoBehaviour
         {
             PlayerMovement();
             SpeedControl();
-            GroundControll();
-            PlayerJump();
-            SwitchWeapons();
-            HandleWeaponAnimations();
+            GroundControl();
         }
     }
 
     void Update()
     {
-
         if (!logicController.Pause)
         {
-            StateHandler();
-            MouseControll();
-            PlayerCrouch();
-            DoorController();
+            HandleInput();
         }
     }
 
+    private void CacheComponents()
+    {
+
+        playerController = GetComponent<CharacterController>();
+        playerAnimator = GetComponent<Animator>();
+        weaponManager = GetComponentInChildren<WeaponManager>();
+        logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
+
+        mainCamera = Camera.main;
+        composer = mainCamera.GetComponentInChildren<CinemachineRecomposer>();
+    }
+
     #region Movement
+    private void HandleInput()
+    {
+        StateHandler();
+        MouseControl();
+        PlayerJump();
+        DoorController();
+        SwitchWeapons();
+        HandleWeaponAnimations();
+    }
+
     void PlayerMovement()
     {
         // Movement
@@ -185,14 +190,14 @@ public class MiaScript : MonoBehaviour
             playerAnimator.SetFloat("YSpeed", moveDirection.z);
 
         }
-        // Mode - air
+        // Mode - airbone
         else if (!isGrounded)
         {
             mState = MovementState.airbone;
             playerAnimator.SetTrigger("Jump");
         }
         // Mode - crouching
-        else if (!isCrouching)
+        else if (Input.GetKeyUp(crouchKey) || Input.GetKeyUp(KeyCode.C))
         {
             mState = MovementState.crouching;
             moveSpeed = crouchSpeed;
@@ -220,14 +225,6 @@ public class MiaScript : MonoBehaviour
         }
     }
 
-    void PlayerCrouch()
-    {
-        if (Input.GetKeyDown(crouchKey))
-        {
-            isCrouching = !isCrouching;
-        }
-    }
-
     // For gravity and after jump
     private void SpeedControl()
     {
@@ -235,7 +232,7 @@ public class MiaScript : MonoBehaviour
         playerController.Move(fallVelocity * Time.deltaTime);
     }
 
-    void MouseControll()
+    void MouseControl()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.fixedDeltaTime;
         transform.Rotate(Vector3.up * mouseX);
@@ -252,7 +249,7 @@ public class MiaScript : MonoBehaviour
         }
     }
 
-    void GroundControll()
+    void GroundControl()
     {
         bool wasGrounded = isGrounded;
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -376,9 +373,16 @@ public class MiaScript : MonoBehaviour
 
     private void UpdateAnimatorController()
     {
+        // Set active weapon object
+        GameObject activeWeapon = weaponManager.GetActiveWeapon(currentWeapon);
+        if (activeWeapon != null)
+        {
+            activeWeapon.SetActive(true);
+        }
+
+        // Update animator layer weight
         playerAnimator.SetLayerWeight(1, currentWeapon == 0 ? 0 : 1);
     }
-
     private void HandleWeaponAnimations()
     {
         // Melee or no weapon
@@ -393,37 +397,69 @@ public class MiaScript : MonoBehaviour
         // Has a firearm or weapon
         else
         {
-            // Shooting
             wState = WeaponState.weapon;
-            if (Input.GetMouseButtonDown(0))
+            // Shooting
+            if (Input.GetMouseButton(0))
             {
                 wState = WeaponState.shooting;
-                playerAnimator.SetTrigger("Shooting");
+                playerAnimator.SetBool("Shooting", true);
             }
+            else
+            {
+                playerAnimator.SetBool("Shooting", false);
+            }
+
             // Aiming
-            else if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButton(1))
             {
                 wState = WeaponState.aiming;
                 playerAnimator.SetBool("isAiming", true);
-
-                if (Input.GetMouseButtonDown(0))
-                {
-                    wState = WeaponState.shooting;
-                    playerAnimator.SetTrigger("Shooting");
-                }
             }
+            else
+            {
+                playerAnimator.SetBool("isAiming", false);
+            }
+
             // Reload
-            else if (Input.GetKey(reloadKey))
+            if (Input.GetKey(reloadKey) && wState != WeaponState.reload)
             {
                 wState = WeaponState.reload;
                 playerAnimator.SetTrigger("Reload");
+                playerAnimator.SetFloat("ReloadSpeed", speedMultiplier);
+                StartCoroutine(ReloadCoroutine(weaponManager.GetCurrentWeaponReloadTime()));
             }
+
             // Running
             else if (isGrounded && Input.GetKey(runKey))
             {
                 playerAnimator.SetBool("Run", true);
             }
         }
+    }
+
+    IEnumerator ReloadCoroutine(float reloadTime)
+    {
+        // Cache AnimatorClipInfo for the reload animation
+        AnimatorClipInfo[] clipInfo = playerAnimator.GetCurrentAnimatorClipInfo(0);
+        float animationDuration = 0f;
+        for (int i = 0; i < clipInfo.Length; i++)
+        {
+            if (clipInfo[i].clip.name == "Reload") // Replace "Reload" with the name of your reload animation clip
+            {
+                animationDuration = clipInfo[i].clip.length;
+                break;
+            }
+        }
+
+        // Calculate the speed multiplier based on the duration of the animation clip and the currentWeaponReloadTime
+        speedMultiplier = animationDuration / reloadTime;
+
+        yield return new WaitForSeconds(reloadTime);
+        playerAnimator.ResetTrigger("Reload");
+        wState = WeaponState.weapon;
+
+        // Reset the speed of the reload animation
+        speedMultiplier = 1.0f;
     }
     #endregion Weapons
 }
