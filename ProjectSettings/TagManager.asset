@@ -18,6 +18,8 @@ TagManager:
   - GameOver
   - Pause
   - Virtual Camera
+  - Zombie
+  - Spawner
   layers:
   - Default
   - TransparentFX
