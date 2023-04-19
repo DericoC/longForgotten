@@ -7,6 +7,12 @@ public class LogicController : MonoBehaviour
 {
     [SerializeField] GameObject pauseMenu;
     private bool pause;
+    private GameObject cross;
+
+    private void Start()
+    {
+        cross = GameObject.FindWithTag("Cross");
+    }
 
     private void Update()
     {
@@ -24,12 +30,15 @@ public class LogicController : MonoBehaviour
         }
     }
 
-    public void quitGame() {
-        Application.Quit();
+    public void exitGame()
+    {
+        SceneManager.LoadScene("MainMenu");
+        Time.timeScale = 1;
     }
 
     public void mapPause()
     {
+        cross.SetActive(false);
         Time.timeScale = 0;
         pause = true;
         pauseMenu.SetActive(true);
@@ -45,6 +54,7 @@ public class LogicController : MonoBehaviour
     public void resume()
     {
         pauseMenu.SetActive(false);
+        cross.SetActive(true);
         pause = false;
         Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
