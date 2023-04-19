@@ -1819,7 +1819,7 @@ Transform:
   m_GameObject: {fileID: 2384391187930405096}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000006, y: 1.0000006, z: 1.0000006}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3229216663806948219}
@@ -1881,9 +1881,8 @@ MonoBehaviour:
   reloadKey: 114
   mouseSensitivity: 100
   playerCurrency: 200
-  weapons: []
   currentWeapon: 0
-  activeInventoryItem: {fileID: 0}
+  speedMultiplier: 1
   gravity: -9.81
   groundDistance: 0.5
   mState: 0
