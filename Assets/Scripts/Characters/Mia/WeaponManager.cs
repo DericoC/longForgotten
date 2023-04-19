@@ -46,4 +46,20 @@ public class WeaponManager : MonoBehaviour
                 return WeaponType.Melee; // fallback to Melee if currentWeapon is out of bounds
         }
     }
+
+    public float GetCurrentWeaponReloadTime()
+    {
+        if (weaponSlots[currentWeaponIndex] != null)
+        {
+            GunBehavior gunBehavior = weaponSlots[currentWeaponIndex].GetComponent<GunBehavior>();
+            if (gunBehavior != null)
+            {
+                Debug.Log($"Weapon: {currentWeaponIndex}, Reload Time: {gunBehavior.GunData.reloadTime}");
+                return gunBehavior.GunData.reloadTime;
+            }
+        }
+        return 0;
+    }
+
+
 }
