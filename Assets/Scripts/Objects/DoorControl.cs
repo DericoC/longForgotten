@@ -74,6 +74,21 @@ public class DoorControl : MonoBehaviour
         }
     }
 
+    public void destroyKeylessDoor()
+    {
+        isOpen = true;
+        doorTextObject.SetActive(false);
+        if (isDoubleDoor)
+        {
+            animator.Play("DoubleDoorFall");
+        }
+        else
+        {
+            animator.Play("DoorFall");
+        }
+        destroyAfterAnimation(2f);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

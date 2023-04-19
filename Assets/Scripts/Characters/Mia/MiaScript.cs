@@ -294,7 +294,7 @@ public class MiaScript : MonoBehaviour
                     }
                     else
                     {
-                        door.openDoor();
+                        door.destroyKeylessDoor();
                     }
                 }
             }

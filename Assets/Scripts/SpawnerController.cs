@@ -6,7 +6,7 @@ public class SpawnerController : MonoBehaviour
 {
 
     public GameObject[] enemyPrefabs; // array of enemy prefabs to spawn
-    public float spawnRadius = 25f; // maximum distance from the player to spawn enemies
+    public float spawnRadius = 50f; // maximum distance from the player to spawn enemies
     public int maxEnemiesPerSpawner = 3; // maximum number of enemies to spawn per spawner
     public float spawnDelay = 10f; // delay between spawns of the same spawner
     public float roundDelay = 10f; // delay between rounds
@@ -53,7 +53,7 @@ public class SpawnerController : MonoBehaviour
                     Instantiate(enemyPrefabs[randomIndex], spawner.transform.position, Quaternion.identity);
 
                     // wait for the specified spawn delay before spawning the next enemy
-                    StartCoroutine(SpawnDelay(spawnDelay));
+                    yield return StartCoroutine(SpawnDelay(spawnDelay));
                 }
             }
         }
