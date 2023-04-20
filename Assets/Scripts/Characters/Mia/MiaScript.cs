@@ -37,7 +37,6 @@ public class MiaScript : MonoBehaviour
     [Header("Mouse configuration")]
     [SerializeField] private float mouseSensitivity;
     [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask();
-    [SerializeField] private Transform debugTransform;
 
     [Header("inGame items / vars")]
     [SerializeField] private int playerCurrency = 200;
@@ -344,7 +343,6 @@ public class MiaScript : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
         {
-            debugTransform.position = raycastHit.point;
             mouseWorldPosition = raycastHit.point;
         }
     }

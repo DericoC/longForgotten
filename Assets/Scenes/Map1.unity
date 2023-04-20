@@ -1244,6 +1244,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mia Bikini Standalone
       objectReference: {fileID: 0}
+    - target: {fileID: 7377429878542826365, guid: 350157cfeae1a174ba935cd08864b10d, type: 3}
+      propertyPath: debugTransform
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 350157cfeae1a174ba935cd08864b10d, type: 3}
 --- !u!4 &343743207 stripped
@@ -1657,8 +1661,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437754931}
-  m_LocalRotation: {x: 0.17910616, y: -0.6803152, z: -0.17702915, w: -0.6882972}
-  m_LocalPosition: {x: -0.6002799, y: 2.5, z: -1.7462339}
+  m_LocalRotation: {x: 0.17910618, y: -0.6803152, z: -0.17702915, w: -0.6882972}
+  m_LocalPosition: {x: -0.6002796, y: 2.5, z: -1.7462339}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2959,8 +2963,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 749714286}
-  m_LocalRotation: {x: 0.21027957, y: -0.67346054, z: -0.20914282, w: -0.67712086}
-  m_LocalPosition: {x: -0.4712805, y: 2.5, z: 4.2499247}
+  m_LocalRotation: {x: 0.21027955, y: -0.67346054, z: -0.2091428, w: -0.67712086}
+  m_LocalPosition: {x: -0.47128066, y: 2.5, z: 4.249924}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4993,8 +4997,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1448955481}
-  m_LocalRotation: {x: 0.19451423, y: -0.6781312, z: -0.19346268, w: -0.6818171}
-  m_LocalPosition: {x: -0.48751888, y: 2.5, z: 4.2460666}
+  m_LocalRotation: {x: 0.19451423, y: -0.6781312, z: -0.1934627, w: -0.6818171}
+  m_LocalPosition: {x: -0.4875653, y: 2.5, z: 4.249764}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

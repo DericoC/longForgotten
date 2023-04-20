@@ -1884,7 +1884,6 @@ MonoBehaviour:
   aimColliderLayerMask:
     serializedVersion: 2
     m_Bits: 1
-  debugTransform: {fileID: 0}
   playerCurrency: 200
   currentWeapon: 0
   speedMultiplier: 1
