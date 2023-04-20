@@ -9,27 +9,62 @@ public enum WeaponType
 
 public class WeaponManager : MonoBehaviour
 {
-    [Header ("Weapon Capacity")]
-    public GameObject[] weaponSlots = new GameObject[3]; // 0: Melee, 1: Primary, 2: Secondary
+    [Header("Weapon Capacity")]
+    public GameObject[] weaponPrefabs = new GameObject[3]; // 0: Melee, 1: Primary, 2: Secondary
+    private GameObject[] weaponInstances = new GameObject[3];
 
-    [Header ("current Weapon")]
+    [Header("Current Weapon")]
+    public GameObject currentWeaponParent;
     [SerializeField] private int currentWeaponIndex = 0; // 0: Melee, 1: Primary, 2: Secondary
 
     public GameObject GetActiveWeapon(int index)
     {
-        return weaponSlots[index];
+        return weaponInstances[index];
     }
 
     public void ActivateWeapon(int index)
     {
-        for (int i = 0; i < weaponSlots.Length; i++)
+        for (int i = 0; i < weaponInstances.Length; i++)
         {
-            if (weaponSlots[i] != null)
+            if (weaponInstances[i] != null)
             {
-                weaponSlots[i].SetActive(i == index);
+                weaponInstances[i].SetActive(i == index);
             }
         }
         currentWeaponIndex = index;
+        UpdateCurrentWeapon();
+    }
+
+
+    private void UpdateCurrentWeapon()
+    {
+        // Destroy the previous weapon if any
+        if (currentWeaponParent.transform.childCount > 0)
+        {
+            Destroy(currentWeaponParent.transform.GetChild(0).gameObject);
+        }
+
+        if (weaponPrefabs[currentWeaponIndex] != null)
+        {
+            // Instantiate the new weapon
+            GameObject newWeapon = Instantiate(weaponPrefabs[currentWeaponIndex], currentWeaponParent.transform);
+            newWeapon.transform.localPosition = Vector3.zero;
+            newWeapon.transform.localRotation = Quaternion.identity;
+
+            // Update the weaponInstances array
+            weaponInstances[currentWeaponIndex] = newWeapon;
+        }
+    }
+
+
+    public string GetCurrentWeaponName()
+    {
+        if (weaponPrefabs[currentWeaponIndex] != null)
+        {
+            return weaponPrefabs[currentWeaponIndex].name.Replace("(Clone)", "").Trim();
+
+        }
+        return "No Weapon";
     }
 
     public WeaponType GetActiveWeaponType()
@@ -49,9 +84,9 @@ public class WeaponManager : MonoBehaviour
 
     public float GetCurrentWeaponReloadTime()
     {
-        if (weaponSlots[currentWeaponIndex] != null)
+        if (weaponPrefabs[currentWeaponIndex] != null)
         {
-            GunBehavior gunBehavior = weaponSlots[currentWeaponIndex].GetComponent<GunBehavior>();
+            GunBehavior gunBehavior = weaponPrefabs[currentWeaponIndex].GetComponent<GunBehavior>();
             if (gunBehavior != null)
             {
                 Debug.Log($"Weapon: {currentWeaponIndex}, Reload Time: {gunBehavior.GunData.reloadTime}");
@@ -60,6 +95,4 @@ public class WeaponManager : MonoBehaviour
         }
         return 0;
     }
-
-
 }

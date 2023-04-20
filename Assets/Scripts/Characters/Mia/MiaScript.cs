@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using static MiaScript;
 
 public class MiaScript : MonoBehaviour
 {
     [Header("Reference to GameObjects")]
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private Transform groundCheck;
-    [SerializeField] private WeaponManager weaponManager;
+    private WeaponManager weaponManager;
     private CinemachineRecomposer composer;
     private CharacterController playerController;
     private LogicController logicController;
@@ -20,9 +21,9 @@ public class MiaScript : MonoBehaviour
     [SerializeField] private float runSpeed = 6.0f;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpHeight = 1.0f;
+    private Vector3 moveDirection;
     private float horizontalInput;
     private float verticalInput;
-    private Vector3 moveDirection;
     private bool isCrouching;
 
     [Header("Keycodes")]
@@ -30,9 +31,13 @@ public class MiaScript : MonoBehaviour
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode crouchKey = KeyCode.LeftControl;
     public KeyCode reloadKey = KeyCode.R;
+    public KeyCode aimKey = KeyCode.Mouse1;
+    public KeyCode shootKey = KeyCode.Mouse0;
 
     [Header("Mouse configuration")]
     [SerializeField] private float mouseSensitivity;
+    [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask();
+    [SerializeField] private Transform debugTransform;
 
     [Header("inGame items / vars")]
     [SerializeField] private int playerCurrency = 200;
@@ -56,8 +61,15 @@ public class MiaScript : MonoBehaviour
     public float groundDistance = 0.5f;
 
     [Header ("Verification states")]
-    [SerializeField] private MovementState mState;
-    [SerializeField] private WeaponState wState;
+    [SerializeField] private MovementState movementState;
+    [SerializeField] private WeaponState weaponState;
+
+    [Header("Inverse Kinematics / Aiming")]
+    [SerializeField] private float aimingDistance = 10f;
+    private float aimingWeight;
+    private Vector2 screenCenterPoint;
+
+    private int handsLayerIndex;
 
     public enum MovementState
     {
@@ -80,14 +92,8 @@ public class MiaScript : MonoBehaviour
     void Start()
     {
         CacheComponents();
-
-        // Inventory
         LoadKeys();
-
-        // Gameplay
         Cursor.lockState = CursorLockMode.Locked;
-
-        // Animator
         UpdateAnimatorController();
     }
 
@@ -107,6 +113,7 @@ public class MiaScript : MonoBehaviour
         {
             HandleInput();
         }
+        ShootPoint();
     }
 
     private void CacheComponents()
@@ -121,7 +128,6 @@ public class MiaScript : MonoBehaviour
         composer = mainCamera.GetComponentInChildren<CinemachineRecomposer>();
     }
 
-    #region Movement
     private void HandleInput()
     {
         StateHandler();
@@ -132,6 +138,7 @@ public class MiaScript : MonoBehaviour
         HandleWeaponAnimations();
     }
 
+    #region Movement
     void PlayerMovement()
     {
         // Movement
@@ -146,68 +153,51 @@ public class MiaScript : MonoBehaviour
                             * moveSpeed * Time.deltaTime));
     }
 
-    void StateHandler()
+    private void StateHandler()
     {
         // Mode - Idle
         if (horizontalInput == 0 && verticalInput == 0 && !Input.GetKey(runKey))
         {
-            mState = MovementState.idle;
-            moveSpeed = walkSpeed;
-            playerAnimator.SetBool("Run", false);
-            playerAnimator.ResetTrigger("Jump");
-
-            playerAnimator.SetFloat("XSpeed", 0);
-            playerAnimator.SetFloat("YSpeed", 0);
-
-            if (!isGrounded && Input.GetKey(jumpKey))
-            {
-                mState = MovementState.airbone;
-                playerAnimator.SetBool("Jump", true);
-
-            }
+            SetMovementState(MovementState.idle, false, 0);
         }
         // Mode - running
         else if (isGrounded && Input.GetKey(runKey))
         {
-            mState = MovementState.running;
-            moveSpeed = runSpeed;
-            playerAnimator.ResetTrigger("Jump");
-
-            playerAnimator.SetBool("Run", true);
-
-            playerAnimator.SetFloat("XSpeed", moveDirection.x);
-            playerAnimator.SetFloat("YSpeed", moveDirection.z);
+            SetMovementState(MovementState.running, true, runSpeed);
         }
         // Mode - walking
         else if (isGrounded && (horizontalInput != 0 || verticalInput != 0))
         {
-            mState = MovementState.walking;
-            moveSpeed = walkSpeed;
-            playerAnimator.SetBool("Run", false);
-            playerAnimator.ResetTrigger("Jump");
-
-            playerAnimator.SetFloat("XSpeed", moveDirection.x);
-            playerAnimator.SetFloat("YSpeed", moveDirection.z);
-
-        }
-        // Mode - airbone
-        else if (!isGrounded)
-        {
-            mState = MovementState.airbone;
-            playerAnimator.SetTrigger("Jump");
+            SetMovementState(MovementState.walking, false, walkSpeed);
         }
         // Mode - crouching
-        else if (Input.GetKeyUp(crouchKey) || Input.GetKeyUp(KeyCode.C))
+        else if (isGrounded && Input.GetKey(crouchKey))
         {
-            mState = MovementState.crouching;
-            moveSpeed = crouchSpeed;
-            playerAnimator.ResetTrigger("Jump");
-
-            playerAnimator.SetBool("Crouch", true);
-
-            playerAnimator.SetFloat("XSpeed", moveDirection.x);
-            playerAnimator.SetFloat("YSpeed", moveDirection.z);
+            SetMovementState(MovementState.crouching, false, crouchSpeed);
         }
+        // Mode - airbone
+        else if (!isGrounded) // CAMBIAR
+        {
+            SetMovementState(MovementState.airbone, true, 0);
+        }
+    }
+
+    private void SetMovementState(MovementState state, bool run, float speed)
+    {
+        movementState = state;
+        moveSpeed = speed;
+        playerAnimator.SetBool("Run", run);
+        if (state == MovementState.crouching)
+        {
+            playerAnimator.SetBool("Crouch", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Crouch", false);
+        }
+        playerAnimator.ResetTrigger("Jump");
+        playerAnimator.SetFloat("XSpeed", moveDirection.x);
+        playerAnimator.SetFloat("YSpeed", moveDirection.z);
     }
 
     void PlayerJump()
@@ -230,23 +220,6 @@ public class MiaScript : MonoBehaviour
     {
         fallVelocity.y += gravity * Time.deltaTime;
         playerController.Move(fallVelocity * Time.deltaTime);
-    }
-
-    void MouseControl()
-    {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.fixedDeltaTime;
-        transform.Rotate(Vector3.up * mouseX);
-        float mouseY = -(Input.GetAxis("Mouse Y") * mouseSensitivity * Time.fixedDeltaTime);
-        composer.m_Tilt += mouseY;
-
-        if (composer.m_Tilt >= 40)
-        {
-            composer.m_Tilt = 40;
-        }
-        else if (composer.m_Tilt <= -40)
-        {
-            composer.m_Tilt = -40;
-        }
     }
 
     void GroundControl()
@@ -344,7 +317,42 @@ public class MiaScript : MonoBehaviour
     }
     #endregion Doors
 
+    #region Mouse
+
+    void MouseControl()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.fixedDeltaTime;
+        transform.Rotate(Vector3.up * mouseX);
+        float mouseY = -(Input.GetAxis("Mouse Y") * mouseSensitivity * Time.fixedDeltaTime);
+        composer.m_Tilt += mouseY;
+
+        if (composer.m_Tilt >= 40)
+        {
+            composer.m_Tilt = 40;
+        }
+        else if (composer.m_Tilt <= -40)
+        {
+            composer.m_Tilt = -40;
+        }
+    }
+
+    public void ShootPoint()
+    {
+        Vector3 mouseWorldPosition = Vector3.zero;
+        screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
+
+        Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+        if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
+        {
+            debugTransform.position = raycastHit.point;
+            mouseWorldPosition = raycastHit.point;
+        }
+    }
+
+    #endregion Mouse
+
     #region Weapons
+
     private void SwitchWeapons()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1) && currentWeapon != 0)
@@ -363,7 +371,7 @@ public class MiaScript : MonoBehaviour
 
     private void SetCurrentWeapon(int weaponIndex)
     {
-        if (weaponManager.GetActiveWeapon(weaponIndex) != null)
+        if (weaponManager.weaponPrefabs[weaponIndex] != null)
         {
             currentWeapon = weaponIndex;
             weaponManager.ActivateWeapon(currentWeapon);
@@ -380,15 +388,32 @@ public class MiaScript : MonoBehaviour
             activeWeapon.SetActive(true);
         }
 
-        // Update animator layer weight
-        playerAnimator.SetLayerWeight(1, currentWeapon == 0 ? 0 : 1);
+        if (weaponManager != null)
+        {
+            // Determine if the player is aiming
+            bool isAiming = weaponManager.GetActiveWeaponType() != WeaponType.Melee;
+
+            // Update animator layer weight for AimLayer and HandsLayer
+            playerAnimator.SetLayerWeight(1, isAiming ? 1f : 0f); // AimLayer
+
+            // Update animator layer weight for HandsLayer based on the current weapon state
+            if (weaponState == WeaponState.shooting || weaponState == WeaponState.aiming || weaponState == WeaponState.reload)
+            {
+                playerAnimator.SetLayerWeight(2, 1f); // HandsLayer
+            }
+            else
+            {
+                playerAnimator.SetLayerWeight(2, 0f); // HandsLayer
+            }
+        }
     }
+
     private void HandleWeaponAnimations()
     {
         // Melee or no weapon
         if (currentWeapon == 0)
         {
-            wState = WeaponState.melee;
+            weaponState = WeaponState.melee;
             if (Input.GetMouseButtonDown(0))
             {
                 playerAnimator.SetTrigger("Punch");
@@ -397,11 +422,11 @@ public class MiaScript : MonoBehaviour
         // Has a firearm or weapon
         else
         {
-            wState = WeaponState.weapon;
+            weaponState = WeaponState.weapon;
             // Shooting
             if (Input.GetMouseButton(0))
             {
-                wState = WeaponState.shooting;
+                weaponState = WeaponState.shooting;
                 playerAnimator.SetBool("Shooting", true);
             }
             else
@@ -412,7 +437,7 @@ public class MiaScript : MonoBehaviour
             // Aiming
             if (Input.GetMouseButton(1))
             {
-                wState = WeaponState.aiming;
+                weaponState = WeaponState.aiming;
                 playerAnimator.SetBool("isAiming", true);
             }
             else
@@ -421,9 +446,9 @@ public class MiaScript : MonoBehaviour
             }
 
             // Reload
-            if (Input.GetKey(reloadKey) && wState != WeaponState.reload)
+            if (Input.GetKey(reloadKey) && weaponState != WeaponState.reload)
             {
-                wState = WeaponState.reload;
+                weaponState = WeaponState.reload;
                 playerAnimator.SetTrigger("Reload");
                 playerAnimator.SetFloat("ReloadSpeed", speedMultiplier);
                 StartCoroutine(ReloadCoroutine(weaponManager.GetCurrentWeaponReloadTime()));
@@ -456,7 +481,7 @@ public class MiaScript : MonoBehaviour
 
         yield return new WaitForSeconds(reloadTime);
         playerAnimator.ResetTrigger("Reload");
-        wState = WeaponState.weapon;
+        weaponState = WeaponState.weapon;
 
         // Reset the speed of the reload animation
         speedMultiplier = 1.0f;
