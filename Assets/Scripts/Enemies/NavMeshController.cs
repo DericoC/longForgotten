@@ -10,6 +10,7 @@ public class NavMeshController : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] NavMeshAgent agent;
     private bool isPlayerDead = false;
+    private bool isRunning = false;
 
     void Start()
     {
@@ -22,84 +23,33 @@ public class NavMeshController : MonoBehaviour
 
     void Update()
     {
+        animationsController();
+    }
+
+    private void animationsController()
+    {
         StartIdle();
         if (!isPlayerDead)
         {
             if (agent.remainingDistance <= 1)
             {
+                StopChase();
                 StopWalk();
-                StopRun();
                 Attack();
             }
-            else
-            {   //Should check if health is low instead
-                if (agent.speed == 2)
-                {
-                    Scream();
-                }
-                else
-                {
-                    StartWalk();
-                }
+            else if (agent.remainingDistance <= 10)
+            {
+                StopChase();
+                StartWalk();
+            }
+            else if (agent.remainingDistance >= 11)
+            {
+                StopWalk();
+                StartChase();
             }
             animator.SetFloat("Speed", agent.speed);
-            //Should update other animator floats here
             agent.destination = player.position;
         }
-    }
-
-    private void Scream()
-    {
-        //Should be run when health is low so the enemy starts running towards the player.
-        animator.SetTrigger("Scream");
-        //wait 2 seconds before running
-        StartCoroutine(waitForScream());
-
-        StartRun();
-    }
-
-    private void Attack()
-    {
-        animator.SetTrigger("Attack1");
-    }
-
-    private void StartRun()
-    {
-        //Starts running towards the player
-        agent.speed = 2;
-        animator.SetBool("isRunning", true);
-    }
-
-    private void StopRun()
-    {
-        animator.SetBool("isRunning", false);
-        agent.speed = agentSpeed;
-    }
-
-    private void StartWalk()
-    {
-        animator.SetBool("isWalking", true);
-    }
-
-    private void StopWalk()
-    {
-        animator.SetBool("isWalking", false);
-        StartIdle();
-    }
-
-    private void StartIdle()
-    {
-        animator.SetBool("isIdle", true);
-    }
-
-    private void StopIdle()
-    {
-        animator.SetBool("isIdle", false);
-    }
-
-    IEnumerator waitForScream()
-    {
-        yield return new WaitForSeconds(2);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -125,10 +75,88 @@ public class NavMeshController : MonoBehaviour
         }
     }
 
+
+    #region Animation Events
+    private void StartChase()
+    {
+        // Chase mode
+        Scream();
+    }
+
+    private void Scream()
+    {
+        if (!isRunning)
+        {
+            //Should be run when health is low so the enemy starts running towards the player.
+            agent.speed = 0;
+            animator.SetTrigger("Scream");
+            //wait 2 seconds before running
+            StartCoroutine(waitForScream());
+
+            StartRun();
+        }
+    }
+
+    private void Attack()
+    {
+        animator.SetTrigger("Attack1");
+    }
+
+    private void StartRun()
+    {
+        //Starts running towards the player
+        isRunning = true;
+        animator.SetBool("isRunning", true);
+        agent.speed = 2;
+    }
+
+    private void StopRun()
+    {
+        isRunning = false;
+        animator.SetBool("isRunning", false);
+        agent.speed = agentSpeed;
+    }
+
+    private void StartWalk()
+    {
+        agent.speed = agentSpeed;
+        animator.SetBool("isWalking", true);
+    }
+
+    private void StopWalk()
+    {
+        animator.SetBool("isWalking", false);
+        StartIdle();
+    }
+
+    private void StartIdle()
+    {
+        animator.SetBool("isIdle", true);
+    }
+
+    private void StopIdle()
+    {
+        animator.SetBool("isIdle", false);
+    }
+
+    IEnumerator waitForScream()
+    {
+        yield return new WaitForSeconds(2.2f);
+    }
+
     void playerDead()
     {
         isPlayerDead = true;
         animator.SetFloat("Speed", 0);
         agent.isStopped = true;
     }
+
+    void StopChase()
+    {
+        StopRun();
+        agent.speed = agentSpeed;
+    }
+
+    #endregion
+
 }
