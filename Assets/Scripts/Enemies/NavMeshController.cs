@@ -22,9 +22,28 @@ public class NavMeshController : MonoBehaviour
 
     void Update()
     {
+        StartIdle();
         if (!isPlayerDead)
         {
+            if (agent.remainingDistance <= 1)
+            {
+                StopWalk();
+                StopRun();
+                Attack();
+            }
+            else
+            {   //Should check if health is low instead
+                if (agent.speed == 2)
+                {
+                    Scream();
+                }
+                else
+                {
+                    StartWalk();
+                }
+            }
             animator.SetFloat("Speed", agent.speed);
+            //Should update other animator floats here
             agent.destination = player.position;
         }
     }
@@ -41,13 +60,13 @@ public class NavMeshController : MonoBehaviour
 
     private void Attack()
     {
-        animator.SetTrigger("Attack");
+        animator.SetTrigger("Attack1");
     }
 
     private void StartRun()
     {
         //Starts running towards the player
-        agent.speed = agentSpeed * 2;
+        agent.speed = 2;
         animator.SetBool("isRunning", true);
     }
 

@@ -241,6 +241,7 @@ GameObject:
   - component: {fileID: 33092680694253718}
   - component: {fileID: 23683258182357440}
   - component: {fileID: 64050463222014084}
+  - component: {fileID: 4274848552106447826}
   m_Layer: 0
   m_Name: DoorD_Frame
   m_TagString: Untagged
@@ -327,6 +328,26 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 386fb276c56b1794aa3cb06650db7b78, type: 3}
+--- !u!114 &4274848552106447826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958764199621066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_StartPoint: {x: 0, y: 1.9040159e-14, z: -0.7334552}
+  m_EndPoint: {x: 0, y: -3.581111e-15, z: 0.6550018}
+  m_Width: 0
+  m_CostModifier: -1
+  m_Bidirectional: 1
+  m_AutoUpdatePosition: 0
+  m_Area: 0
 --- !u!1 &1996853673326720610
 GameObject:
   m_ObjectHideFlags: 0
