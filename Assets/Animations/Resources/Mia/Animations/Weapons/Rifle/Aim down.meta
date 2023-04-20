@@ -1,8 +1,14 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Animations/Resources/Mia/Animations/Weapons/Rifle/Aim down.meta
 guid: 764396444efcd471180a4a5e3b895c9b
 folderAsset: yes
 DefaultImporter:
+========
+guid: 60325e062cfdf452297b5f2535741589
+NativeFormatImporter:
+>>>>>>>> 9db573cbc0b1e153afe836337d466c85abde44fa:Assets/Scenes/Map1/NavMesh-Asylum 1.asset.meta
   externalObjects: {}
+  mainObjectFileID: 23800000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
