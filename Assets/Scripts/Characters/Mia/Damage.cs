@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class Damage : MonoBehaviour
 {
     [SerializeField] int count = 1;
-    [SerializeField] GameObject dust;
+    [SerializeField] GameObject blood;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            Instantiate(dust, other.transform.position, Quaternion.identity);
+            GameObject b = Instantiate(blood, other.transform.position, Quaternion.identity);
             other.GetComponent<Health>().LostLive(count);
+            Destroy(b, 2);
         }
     }
 
@@ -20,7 +22,7 @@ public class Damage : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Instantiate(dust, other.transform.position, Quaternion.identity);
+            Instantiate(blood, other.transform.position, Quaternion.identity);
             other.GetComponent<Health>().LostLive(count);
         }
     }

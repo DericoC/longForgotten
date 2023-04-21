@@ -9,16 +9,15 @@ public class Health : MonoBehaviour
     [SerializeField] bool _protected = false;
     [SerializeField] float protectedTime = 1;
     [SerializeField] float waitTime = 0.2f;
+    [SerializeField] GameObject gameOverPanel;
     private LogicController logicController;
     private Animator animator;
-    public bool dead = false;
-    private GameObject gameOverPanel;
+    public static bool dead = false;
 
     private void Start()
     {
         logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
         animator = GetComponent<Animator>();
-        gameOverPanel = GameObject.FindWithTag("GameOver");
     }
 
     private void Update()
@@ -26,10 +25,13 @@ public class Health : MonoBehaviour
         if (!logicController.Pause) {
             if (lives == 0)
             {
+                dead = true;
                 animator.SetBool("Dead", true);
-                animator.SetFloat("Speed", 0);
+                animator.SetFloat("XSpeed", 0);
+                animator.SetFloat("YSpeed", 0);
                 GetComponent<MiaScript>().enabled = false;
                 gameOverPanel.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
             }
         }
     }
@@ -41,7 +43,6 @@ public class Health : MonoBehaviour
             animator.SetTrigger("Hit");
             lives -= damage;
             StartCoroutine(Protect());
-            //StartCoroutine(StopVelocity());
         }
     }
 
@@ -67,12 +68,4 @@ public class Health : MonoBehaviour
         yield return new WaitForSeconds(protectedTime);
         _protected = false;
     }
-
-    //IEnumerator StopVelocity()
-    //{
-    //    var actualVelocity = GetComponent<MiaScript>().PlayerSpeed;
-    //    GetComponent<MiaScript>().PlayerSpeed = 0;
-    //    yield return new WaitForSeconds(waitTime);
-    //    GetComponent<MiaScript>().PlayerSpeed = actualVelocity;
-    //}
 }

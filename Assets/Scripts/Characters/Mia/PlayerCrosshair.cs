@@ -5,7 +5,7 @@ public class PlayerCrosshair : MonoBehaviour
 {
     private CinemachineRecomposer cameraRecomposer;
     private GameObject crossHair;
-    public MiaScript miaScript;
+    private MiaScript miaScript;
     private bool smallCrossHairExec;
     private bool bigCrossHairExec;
 

@@ -1922,10 +1922,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e180370a291241339927c0621c64ece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lives: 3
+  lives: 5
   _protected: 0
   protectedTime: 1
   waitTime: 0.2
+  gameOverPanel: {fileID: 0}
   dead: 0
 --- !u!114 &1070097591
 MonoBehaviour:
@@ -1939,7 +1940,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a416bcf861ca14e9ba1c8c9de445ff9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miaScript: {fileID: 0}
 --- !u!114 &339618525
 MonoBehaviour:
   m_ObjectHideFlags: 0

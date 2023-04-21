@@ -56,7 +56,7 @@ public class NavMeshController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            animator.SetTrigger("Attack");
+            animator.SetTrigger("Attack1");
         }
     }
 
@@ -70,7 +70,7 @@ public class NavMeshController : MonoBehaviour
             }
             else
             {
-                animator.SetTrigger("Attack");
+                animator.SetTrigger("Attack1");
             }
         }
     }

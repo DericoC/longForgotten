@@ -16,7 +16,7 @@ public class LogicController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !Health.dead)
         {
             Cursor.lockState = CursorLockMode.None;
             if (pause)
