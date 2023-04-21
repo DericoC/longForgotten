@@ -8,22 +8,23 @@ public class Damage : MonoBehaviour
     [SerializeField] int count = 1;
     [SerializeField] GameObject blood;
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider collider)
     {
-        if (other.CompareTag("Player"))
+        if (collider.CompareTag("Player"))
         {
-            GameObject b = Instantiate(blood, other.transform.position, Quaternion.identity);
-            other.GetComponent<Health>().LostLive(count);
-            Destroy(b, 2);
+            GameObject BloodParticle = Instantiate(blood, collider.transform.position, Quaternion.identity);
+            collider.GetComponent<Health>().LostLive(count);
+            Destroy(BloodParticle, 0.3f);
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider collider)
     {
-        if (other.CompareTag("Player"))
+        if (collider.CompareTag("Player"))
         {
-            Instantiate(blood, other.transform.position, Quaternion.identity);
-            other.GetComponent<Health>().LostLive(count);
+            GameObject BloodParticle = Instantiate(blood, collider.transform.position, Quaternion.identity);
+            collider.GetComponent<Health>().LostLive(count);
+            Destroy(BloodParticle, 0.3f);
         }
     }
 }

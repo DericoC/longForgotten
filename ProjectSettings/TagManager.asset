@@ -20,6 +20,7 @@ TagManager:
   - Virtual Camera
   - Zombie
   - Spawner
+  - Punch
   layers:
   - Default
   - TransparentFX
