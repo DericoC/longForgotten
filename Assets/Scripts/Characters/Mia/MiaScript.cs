@@ -56,7 +56,7 @@ public class MiaScript : MonoBehaviour
     private Vector3 fallVelocity;
 
     [Header ("Ground check")]
-    private bool isGrounded;
+    public bool isGrounded;
     public float groundDistance = 0.5f;
 
     [Header ("Verification states")]
@@ -224,13 +224,17 @@ public class MiaScript : MonoBehaviour
     void GroundControl()
     {
         bool wasGrounded = isGrounded;
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        //isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance);
+
 
         if (isGrounded && !wasGrounded && fallVelocity.y < 0)
         {
             fallVelocity.y = -2f;
         }
     }
+
+
     #endregion Movement
 
     #region Doors
