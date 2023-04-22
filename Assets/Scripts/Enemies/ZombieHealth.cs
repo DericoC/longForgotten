@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ZombieHealth : MonoBehaviour
 {
+    [Range(0, 100)]
     public float Health = 100.0f;
     public void TakeDamage(float amount)
     {
