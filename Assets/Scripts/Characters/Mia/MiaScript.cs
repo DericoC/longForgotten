@@ -429,6 +429,7 @@ public class MiaScript : MonoBehaviour
             if (Input.GetMouseButton(0))
             {
                 weaponState = WeaponState.shooting;
+                //TODO SHOOTING SHOULD BE HERE
                 playerAnimator.SetBool("Shooting", true);
             }
             else

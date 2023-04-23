@@ -18,11 +18,21 @@ public class GunBehavior : MonoBehaviour
 
     float timeSinceLastShot;
 
+    private void Start()
+    {
+        gunData.currentAmmo = gunData.magSize;
+    }
+
     private void Update()
     {
         timeSinceLastShot += Time.deltaTime;
 
         Debug.DrawRay(muzzle.position, muzzle.forward * gunData.maxDistance, Color.green);
+
+        if (Input.GetMouseButton(0))
+        {
+            Shoot();
+        }
     }
 
     // Check if player ain't reloading and some time has pass since last shot
@@ -38,7 +48,6 @@ public class GunBehavior : MonoBehaviour
         {
             if (CanShoot())
             {
-                Debug.Log("Shoot!");
                 RaycastHit hit;
                 if (Physics.Raycast(muzzle.position, muzzle.forward, out hit, gunData.maxDistance))
                 {
@@ -47,12 +56,12 @@ public class GunBehavior : MonoBehaviour
                         hit.rigidbody.AddForce(-hit.normal * gunData.impactForce);
                     }
 
-                    
                     switch (hit.transform.tag)
                     {
                         default:
                             GameObject impact = Instantiate(GenericImpactEffect, hit.point, Quaternion.LookRotation(hit.normal));
                             Destroy(impact, impactDuration);
+                            Debug.Log("Dong!");
                             break;
                             case "Zombie":
                             GameObject impact2 = Instantiate(BloodImpactEffect, hit.point, Quaternion.LookRotation(hit.normal));
@@ -61,22 +70,24 @@ public class GunBehavior : MonoBehaviour
                             damagable?.TakeDamage(gunData.damage);
 
                             Destroy(impact2, impactDuration);
+                            Debug.Log("Ding!");
                             break;
                     }
-
-                    //GameObject impact = Instantiate(GenericImpactEffect, hit.point, Quaternion.LookRotation(hit.normal));
-
                     gunData.currentAmmo--;
                     timeSinceLastShot = 0;
                 }
             }
             else return;
         }
+        else
+        {
+            StartReloading();
+        }
     }
 
     public void StartReloading()
     {
-        if (!gunData.reloading)
+        if (!gunData.reloading && !gunData.currentAmmo.Equals(gunData.magSize))
         {
             StartCoroutine(Reload());
         }

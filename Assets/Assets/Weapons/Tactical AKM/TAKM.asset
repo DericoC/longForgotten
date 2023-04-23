@@ -15,7 +15,8 @@ MonoBehaviour:
   name: AK47M
   damage: 15
   maxDistance: 40
-  currentAmmo: 60
+  impactForce: 2
+  currentAmmo: 42
   magSize: 60
   fireRate: 600
   reloadTime: 2.5

@@ -1211,7 +1211,8 @@ MonoBehaviour:
   gunData: {fileID: 11400000, guid: 911b7821aa4914622b9f6a33a90a2715, type: 2}
   muzzle: {fileID: 1440492162012087970}
   impactForce: 30
-  impactEffect: {fileID: 0}
+  GenericImpactEffect: {fileID: 4222078578372367719, guid: 32beb7fc802902e48ab85b58bb95969a, type: 3}
+  BloodImpactEffect: {fileID: 6890082028572751503, guid: a5acc6477d231b44386aa3e96b9c7a7a, type: 3}
   muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc, type: 3}
   impactDuration: 0.2
 --- !u!1 &1413918597966023905
