@@ -215,6 +215,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunData: {fileID: 11400000, guid: c2bc2d43ae7894e86874e013e9d7f69a, type: 2}
   muzzle: {fileID: 3377236500994833201}
+  impactForce: 30
+  impactEffect: {fileID: 0}
+  muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc, type: 3}
+  impactDuration: 0.2
 --- !u!1 &6474551181200684163
 GameObject:
   m_ObjectHideFlags: 0

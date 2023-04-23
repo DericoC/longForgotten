@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem.HID;
 
@@ -9,6 +10,11 @@ public class GunBehavior : MonoBehaviour
     [Header("References")]
     [SerializeField] private GunData gunData;
     [SerializeField] private Transform muzzle;
+    public float impactForce = 30f;
+    public GameObject GenericImpactEffect;
+    public GameObject BloodImpactEffect;
+    public GameObject muzzleFlash;
+    public float impactDuration = 0.2f;
 
     float timeSinceLastShot;
 
@@ -32,21 +38,40 @@ public class GunBehavior : MonoBehaviour
         {
             if (CanShoot())
             {
-                if (Physics.Raycast(muzzle.position, muzzle.forward, out
-                    RaycastHit hitInfo, gunData.maxDistance))
+                Debug.Log("Shoot!");
+                RaycastHit hit;
+                if (Physics.Raycast(muzzle.position, muzzle.forward, out hit, gunData.maxDistance))
                 {
-                    IDamagable damagable = hitInfo.transform.GetComponent<IDamagable>();
-                    damagable?.TakeDamage(gunData.damage);
-                }
-                gunData.currentAmmo--;
-                timeSinceLastShot = 0;
-            }
-        }
-    }
+                    if (hit.rigidbody != null)
+                    {
+                        hit.rigidbody.AddForce(-hit.normal * gunData.impactForce);
+                    }
 
-    private void OnGunShot()
-    {
-        throw new NotImplementedException();
+                    
+                    switch (hit.transform.tag)
+                    {
+                        default:
+                            GameObject impact = Instantiate(GenericImpactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+                            Destroy(impact, impactDuration);
+                            break;
+                            case "Zombie":
+                            GameObject impact2 = Instantiate(BloodImpactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+
+                            IDamagable damagable = hit.transform.GetComponent<IDamagable>();
+                            damagable?.TakeDamage(gunData.damage);
+
+                            Destroy(impact2, impactDuration);
+                            break;
+                    }
+
+                    //GameObject impact = Instantiate(GenericImpactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+
+                    gunData.currentAmmo--;
+                    timeSinceLastShot = 0;
+                }
+            }
+            else return;
+        }
     }
 
     public void StartReloading()
@@ -61,12 +86,40 @@ public class GunBehavior : MonoBehaviour
     {
         gunData.reloading = true;
 
+        // Show reloading message
+        //GameObject canvas = GameObject.Find("AmmoHUD");
+        //Text reloadingText = canvas.transform.Find("ReloadText").GetComponent<Text>();
+        //reloadingText.text = "Reloading...";
+        //reloadingText.enabled = true;
+
         yield return new WaitForSeconds(gunData.reloadTime);
+
+        // Hide reloading message
+        //reloadingText.enabled = false;
 
         gunData.currentAmmo = gunData.magSize;
 
         gunData.reloading = false;
     }
+
+    /*
+    void UpdateAmmoCounter()
+    {
+        GameObject canvas = GameObject.Find("AmmoHUD");
+        Text ammoText = canvas.transform.Find("CurrentAmmo").GetComponent<Text>();
+
+        string bulletSymbols = "";
+        for (int i = 0; i < currentAmmo; i++)
+        {
+            bulletSymbols += "I";
+        }
+
+        ammoText.text = bulletSymbols;
+    }
+     * 
+     */
+
+
 
     // Getters / Setters
     public GunData GunData { get => gunData; set => gunData = value; }

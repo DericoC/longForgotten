@@ -258,6 +258,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunData: {fileID: 11400000, guid: 996c2f21b543c40d89d47655915e276e, type: 2}
   muzzle: {fileID: 4270323199860208794}
+  impactForce: 30
+  GenericImpactEffect: {fileID: 1892351807075712, guid: 44be68b4fc4366142a9cd1ae1f761ea4, type: 3}
+  BloodImpactEffect: {fileID: 1096893136476370, guid: 24b82347924701148a13c746edfb6b22, type: 3}
+  muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc, type: 3}
+  impactDuration: 0.2
 --- !u!1 &1017680658654434068
 GameObject:
   m_ObjectHideFlags: 0

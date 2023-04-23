@@ -281,19 +281,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   count: 1
   blood: {fileID: 4558727459997121444, guid: 62fb359a38d5641b88b3d3d3711c7c05, type: 3}
---- !u!114 &3480192460642563176
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1227972533208170689}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aded664abfa4e7942b2adffca2d712d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Health: 100
 --- !u!114 &4590865117370430700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,6 +319,19 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &2549894208323783304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227972533208170689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37ca86e75d5bc4e38b7955e1ad08ea71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
 --- !u!4 &1891918868176116347 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8d7b968eac58a6a40be848f2edc242b5, type: 3}
