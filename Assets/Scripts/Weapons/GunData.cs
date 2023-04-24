@@ -11,6 +11,7 @@ public class GunData : ScriptableObject
     [Header("Shooting")]
     public float damage;
     public float maxDistance;
+    //ImpactForce is the force that the bullet will apply to the object it hits
     public float impactForce;
 
     [Header("Reloading")]

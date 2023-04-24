@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -227,7 +228,6 @@ public class MiaScript : MonoBehaviour
         //isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance);
 
-
         if (isGrounded && !wasGrounded && fallVelocity.y < 0)
         {
             fallVelocity.y = -2f;
@@ -339,7 +339,7 @@ public class MiaScript : MonoBehaviour
         }
     }
 
-    public void ShootPoint()
+    public Vector3 ShootPoint()
     {
         Vector3 mouseWorldPosition = Vector3.zero;
         screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
@@ -349,6 +349,8 @@ public class MiaScript : MonoBehaviour
         {
             mouseWorldPosition = raycastHit.point;
         }
+
+        return mouseWorldPosition;
     }
 
     #endregion Mouse

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: AK47M
   damage: 20
-  maxDistance: 40
+  maxDistance: 200
   impactForce: 2
   currentAmmo: 18
   magSize: 18

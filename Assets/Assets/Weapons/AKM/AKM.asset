@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: AK47M
   damage: 15
-  maxDistance: 40
+  maxDistance: 200
   impactForce: 2
-  currentAmmo: 0
+  currentAmmo: 30
   magSize: 30
   fireRate: 600
   reloadTime: 3
-  reloading: 0
+  reloading: 1

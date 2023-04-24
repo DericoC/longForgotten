@@ -66,6 +66,7 @@ public class SpawnerController : MonoBehaviour
 
         // increment the current round
         currentRound++;
+        //increase difficulty
         DifficultyIncrease();
 
         // start the next round
@@ -74,6 +75,7 @@ public class SpawnerController : MonoBehaviour
 
     private void DifficultyIncrease()
     {
+        //increase the amount of zombies spawning per spawner each round
         maxEnemiesPerSpawner = currentRound * maxEnemiesPerSpawner;
     }
 

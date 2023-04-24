@@ -26,6 +26,7 @@ public class NavMeshController : MonoBehaviour
         animationsController();
     }
 
+    //Maneja todas las animaciones en base a los estados del enemigo
     private void animationsController()
     {
         StartIdle();
@@ -51,6 +52,7 @@ public class NavMeshController : MonoBehaviour
             agent.destination = player.position;
         }
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
