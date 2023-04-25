@@ -33,6 +33,9 @@ TagManager:
   - Door4
   - Door3
   - PlayerGUI
+  - DamageGUI
+  - DamagePos
+  - ScoreController
   layers:
   - Default
   - TransparentFX

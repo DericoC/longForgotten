@@ -34,120 +34,84 @@ public class Projectile : MonoBehaviour {
 	}
 
 	//If the bullet collides with anything
-	private void OnCollisionEnter (Collision collision)
+	private void OnCollisionEnter(Collision collision)
 	{
 		//Ignore collisions with other projectiles.
 		if (collision.gameObject.GetComponent<Projectile>() != null)
 			return;
-		
-		// //Ignore collision if bullet collides with "Player" tag
-		// if (collision.gameObject.CompareTag("Player")) 
-		// {
-		// 	//Physics.IgnoreCollision (collision.collider);
-		// 	Debug.LogWarning("Collides with player");
-		// 	//Physics.IgnoreCollision(GetComponent<Collider>(), GetComponent<Collider>());
-		//
-		// 	//Ignore player character collision, otherwise this moves it, which is quite odd, and other weird stuff happens!
-		// 	Physics.IgnoreCollision(collision.collider, GetComponent<Collider>());
-		//
-		// 	//Return, otherwise we will destroy with this hit, which we don't want!
-		// 	return;
-		// }
-		//
+
 		//If destroy on impact is false, start 
 		//coroutine with random destroy timer
-		if (!destroyOnImpact) 
+		if (!destroyOnImpact)
 		{
-			StartCoroutine (DestroyTimer ());
+			StartCoroutine(DestroyTimer());
 		}
 		//Otherwise, destroy bullet on impact
-		else 
+		else
 		{
-			Destroy (gameObject);
-		}
-
-		//If bullet collides with "Blood" tag
-		if (collision.transform.tag == "Blood") 
-		{
-			//Instantiate random impact prefab from array
-			Instantiate (bloodImpactPrefabs [Random.Range 
-				(0, bloodImpactPrefabs.Length)], transform.position, 
-				Quaternion.LookRotation (collision.contacts [0].normal));
-			//Destroy bullet object
 			Destroy(gameObject);
 		}
 
-		//If bullet collides with "Metal" tag
-		if (collision.transform.tag == "Metal") 
+		switch (collision.transform.tag)
 		{
-			//Instantiate random impact prefab from array
-			Instantiate (metalImpactPrefabs [Random.Range 
-				(0, bloodImpactPrefabs.Length)], transform.position, 
-				Quaternion.LookRotation (collision.contacts [0].normal));
-			//Destroy bullet object
-			Destroy(gameObject);
+			case "Blood":
+				// Instantiate random impact prefab from array
+				Instantiate(bloodImpactPrefabs[Random.Range(0, bloodImpactPrefabs.Length)],
+					transform.position, Quaternion.LookRotation(collision.contacts[0].normal));
+				break;
+
+			case "Metal":
+				// Instantiate random impact prefab from array
+				Instantiate(metalImpactPrefabs[Random.Range(0, metalImpactPrefabs.Length)],
+					transform.position, Quaternion.LookRotation(collision.contacts[0].normal));
+				break;
+
+			case "Dirt":
+				// Instantiate random impact prefab from array
+				Instantiate(dirtImpactPrefabs[Random.Range(0, dirtImpactPrefabs.Length)],
+					transform.position, Quaternion.LookRotation(collision.contacts[0].normal));
+				break;
+
+			case "Concrete":
+				// Instantiate random impact prefab from array
+				Instantiate(concreteImpactPrefabs[Random.Range(0, concreteImpactPrefabs.Length)],
+					transform.position, Quaternion.LookRotation(collision.contacts[0].normal));
+				break;
+
+			case "Target":
+				// Toggle "isHit" on target object
+				collision.transform.gameObject.GetComponent<TargetScript>().isHit = true;
+				break;
+
+			case "Zombie":
+				// Instantiate random impact prefab from array
+				Instantiate(bloodImpactPrefabs[Random.Range(0, bloodImpactPrefabs.Length)],
+					transform.position, Quaternion.LookRotation(collision.contacts[0].normal));
+
+				collision.transform.gameObject.GetComponent<Target>().isHit = true;
+				break;
+
+			case "ExplosiveBarrel":
+				// Toggle "explode" on explosive barrel object
+				collision.transform.gameObject.GetComponent<ExplosiveBarrelScript>().explode = true;
+				break;
+
+			case "GasTank":
+				// Toggle "isHit" on gas tank object
+				collision.transform.gameObject.GetComponent<GasTankScript>().isHit = true;
+				break;
+
+			default:
+                // Instantiate random impact prefab from array
+                Instantiate(concreteImpactPrefabs[Random.Range(0, concreteImpactPrefabs.Length)],
+                    transform.position, Quaternion.LookRotation(collision.contacts[0].normal));
+                break;
 		}
+        // Destroy bullet object
+        Destroy(gameObject);
+    }
 
-		//If bullet collides with "Dirt" tag
-		if (collision.transform.tag == "Dirt") 
-		{
-			//Instantiate random impact prefab from array
-			Instantiate (dirtImpactPrefabs [Random.Range 
-				(0, bloodImpactPrefabs.Length)], transform.position, 
-				Quaternion.LookRotation (collision.contacts [0].normal));
-			//Destroy bullet object
-			Destroy(gameObject);
-		}
-
-		//If bullet collides with "Concrete" tag
-		if (collision.transform.tag == "Concrete") 
-		{
-			//Instantiate random impact prefab from array
-			Instantiate (concreteImpactPrefabs [Random.Range 
-				(0, bloodImpactPrefabs.Length)], transform.position, 
-				Quaternion.LookRotation (collision.contacts [0].normal));
-			//Destroy bullet object
-			Destroy(gameObject);
-		}
-
-		//If bullet collides with "Target" tag
-		if (collision.transform.tag == "Target") 
-		{
-			//Toggle "isHit" on target object
-			collision.transform.gameObject.GetComponent
-				<TargetScript>().isHit = true;
-			//Destroy bullet object
-			Destroy(gameObject);
-		}
-
-        if (collision.transform.tag == "Zombie")
-        {
-            collision.transform.gameObject.GetComponent<Target>().isHit = true;
-            Destroy(gameObject);
-        }
-
-        //If bullet collides with "ExplosiveBarrel" tag
-        if (collision.transform.tag == "ExplosiveBarrel") 
-		{
-			//Toggle "explode" on explosive barrel object
-			collision.transform.gameObject.GetComponent
-				<ExplosiveBarrelScript>().explode = true;
-			//Destroy bullet object
-			Destroy(gameObject);
-		}
-
-		//If bullet collides with "GasTank" tag
-		if (collision.transform.tag == "GasTank") 
-		{
-			//Toggle "isHit" on gas tank object
-			collision.transform.gameObject.GetComponent
-				<GasTankScript> ().isHit = true;
-			//Destroy bullet object
-			Destroy(gameObject);
-		}
-	}
-
-	private IEnumerator DestroyTimer () 
+        private IEnumerator DestroyTimer () 
 	{
 		//Wait random time based on min and max values
 		yield return new WaitForSeconds

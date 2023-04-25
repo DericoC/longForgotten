@@ -12,10 +12,15 @@ public class NavMeshController : MonoBehaviour
     private bool isPlayerDead = false;
     private bool isRunning = false;
 
+    private CapsuleCollider CapsuleCollider;
+    private BoxCollider BoxCollider;
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         animator = GetComponent<Animator>();
+        CapsuleCollider = GetComponent<CapsuleCollider>();
+        BoxCollider = GetComponent<BoxCollider>();
         agent = GetComponent<NavMeshAgent>();
         agent.destination = player.position;
         agent.speed = agentSpeed;
@@ -164,6 +169,15 @@ public class NavMeshController : MonoBehaviour
     public void triggerDead() {
         agent.isStopped = true;
         animator.SetBool("IsDead", true);
+        CapsuleCollider.enabled = false;
+        BoxCollider.enabled = false;
+        StartCoroutine(deleteBody());
+    }
+
+    IEnumerator deleteBody()
+    {
+        yield return new WaitForSeconds(4);
+        Destroy(gameObject);
     }
 
     #endregion

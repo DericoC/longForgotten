@@ -199,6 +199,10 @@ namespace LF.LongForgotten
         public override void Reload()
         {
             //Play Reload Animation.
+           if(IsFull())
+            {
+                return;
+            }
             animator.Play(HasAmmunition() ? "Reload" : "Reload Empty", 0, 0.0f);
         }
         public override void Fire(float spreadMultiplier = 1.0f)
