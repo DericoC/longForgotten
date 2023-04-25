@@ -4420,11 +4420,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: FirstPerson
       objectReference: {fileID: 0}
-    - target: {fileID: 6311201337086346178, guid: 19eadcf8fbed56b4da77ca94c1b4145f,
-        type: 3}
-      propertyPath: m_Center.y
-      value: 1.1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 19eadcf8fbed56b4da77ca94c1b4145f, type: 3}
 --- !u!1 &1469065971
@@ -6424,10 +6419,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8604361375833548590, guid: beef3bcde1610f04aa96275436147bb9,
+        type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
     - target: {fileID: 8605160569769651574, guid: beef3bcde1610f04aa96275436147bb9,
         type: 3}
       propertyPath: m_Name
       value: Asylum
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8613758074321348238, guid: beef3bcde1610f04aa96275436147bb9,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 8606311150561899612, guid: beef3bcde1610f04aa96275436147bb9, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: beef3bcde1610f04aa96275436147bb9, type: 3}

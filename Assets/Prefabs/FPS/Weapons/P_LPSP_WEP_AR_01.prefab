@@ -464,12 +464,12 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dfb15e1973f01f04fa89c61cd45f8d1f, type: 2}
-  - {fileID: 2100000, guid: 4e2b3471c053d0149bc6b37c53fd84ec, type: 2}
-  - {fileID: 2100000, guid: 2d8b454c96dd40341a2b2ea298ad1576, type: 2}
-  - {fileID: 2100000, guid: 4e2b3471c053d0149bc6b37c53fd84ec, type: 2}
-  - {fileID: 2100000, guid: 2d8b454c96dd40341a2b2ea298ad1576, type: 2}
-  - {fileID: 2100000, guid: 4e2b3471c053d0149bc6b37c53fd84ec, type: 2}
+  - {fileID: 2100000, guid: 8bf3795760184334483710ee835cccdc, type: 2}
+  - {fileID: 2100000, guid: f47e38b127e66d7449229b1fa2640281, type: 2}
+  - {fileID: 2100000, guid: f47e38b127e66d7449229b1fa2640281, type: 2}
+  - {fileID: 2100000, guid: f47e38b127e66d7449229b1fa2640281, type: 2}
+  - {fileID: 2100000, guid: f47e38b127e66d7449229b1fa2640281, type: 2}
+  - {fileID: 2100000, guid: f47e38b127e66d7449229b1fa2640281, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -665,7 +665,7 @@ PrefabInstance:
     - target: {fileID: 2300000, guid: 9f4d52975d229e74fa27561b00052caa, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: dfb15e1973f01f04fa89c61cd45f8d1f, type: 2}
+      objectReference: {fileID: 2100000, guid: 8bf3795760184334483710ee835cccdc, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f4d52975d229e74fa27561b00052caa, type: 3}
 --- !u!4 &7914072488023287926 stripped

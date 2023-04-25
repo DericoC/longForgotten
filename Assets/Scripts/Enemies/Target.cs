@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem.XR;
 
+
 public class Target : MonoBehaviour {
 
     public int health = 100;
@@ -33,7 +34,7 @@ public class Target : MonoBehaviour {
             {
                 if (!protectionActive) {
                     StartCoroutine(protection());
-                    health -= 20;
+                    health -= Random.Range(14, 22);
                     audioSource.GetComponent<AudioSource>().clip = damageSound;
                     audioSource.Play();
 
