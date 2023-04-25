@@ -2,22 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] int lives = 3;
+    [SerializeField] int lives = 5;
     [SerializeField] bool _protected = false;
-    [SerializeField] float protectedTime = 1;
+    [SerializeField] float protectedTime = 0.5f;
     [SerializeField] float waitTime = 0.2f;
     [SerializeField] GameObject gameOverPanel;
     private LogicController logicController;
-    private Animator animator;
     public static bool dead = false;
 
     private void Start()
     {
         logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
-        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -26,10 +25,7 @@ public class Health : MonoBehaviour
             if (lives == 0)
             {
                 dead = true;
-                animator.SetBool("Dead", true);
-                animator.SetFloat("XSpeed", 0);
-                animator.SetFloat("YSpeed", 0);
-                GetComponent<MiaScript>().enabled = false;
+                GetComponent<PlayerInput>().enabled = false;
                 gameOverPanel.SetActive(true);
                 Cursor.lockState = CursorLockMode.None;
             }
@@ -40,7 +36,6 @@ public class Health : MonoBehaviour
     {
         if (!_protected && lives > 0)
         {
-            animator.SetTrigger("Hit");
             lives -= damage;
             StartCoroutine(Protect());
         }

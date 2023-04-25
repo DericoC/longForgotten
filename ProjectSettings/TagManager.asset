@@ -4,23 +4,35 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Floor
-  - DoorOpenText
-  - Door1
-  - Door2
-  - Door3
-  - Door4
-  - Door5
-  - Rifle
-  - Pistol
+  - Wall
+  - Metal
+  - Blood
+  - Dirt
+  - Concrete
+  - ExplosiveBarrel
+  - Target
+  - GasTank
+  - Metal (Static)
+  - Wood (Static)
+  - Dirt (Static)
+  - Wood
   - Cross
-  - Logic
-  - GameOver
   - Pause
+  - Logic
   - Virtual Camera
+  - GameOver
   - Zombie
-  - Spawner
+  - Rifle
   - Punch
+  - Spawner
+  - Floor
+  - Door1
+  - DoorOpenText
+  - Door5
+  - Door2
+  - Door4
+  - Door3
+  - PlayerGUI
   layers:
   - Default
   - TransparentFX
@@ -28,16 +40,16 @@ TagManager:
   - 
   - Water
   - UI
-  - Floor
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Wall
+  - First Person View
+  - Character
+  - Post Processing
+  - Post Processing Weapon
+  - Post Processing Scope
+  - Invisible Wall
+  - Projectile
   - 
   - 
   - 

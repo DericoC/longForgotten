@@ -13,12 +13,12 @@ public class DoorControl : MonoBehaviour
     private TextMeshProUGUI doorTextMeshPro;
     private bool isOpen = false;
     private Animator animator;
-    private MiaScript player;
+    private InfimaGames.LowPolyShooterPack.Character player;
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<MiaScript>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<InfimaGames.LowPolyShooterPack.Character>();
         doorTextObject = transform.GetChild(0).gameObject;
         doorTextMeshPro = doorTextObject.GetComponentInChildren<TextMeshProUGUI>();
     }

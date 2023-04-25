@@ -77,7 +77,7 @@ public class GunBehavior : MonoBehaviour
                             //El dong es para saber que se disparo a la pared
                             Debug.Log("Dong!");
                             break;
-                            case "Zombie":
+                        case "Zombie":
                             //Iniciamos el objeto y lo destruimos despues de un tiempo (impactDuration) este tiene impacto de sangre
                             GameObject impact2 = Instantiate(BloodImpactEffect, hit.point, Quaternion.LookRotation(hit.normal));
 

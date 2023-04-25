@@ -6,12 +6,12 @@ using UnityEngine.SceneManagement;
 public class LogicController : MonoBehaviour
 {
     [SerializeField] GameObject pauseMenu;
+    private GameObject characterCanvas;
     private bool pause;
-    private GameObject cross;
 
     private void Start()
     {
-        cross = GameObject.FindWithTag("Cross");
+        characterCanvas = GameObject.FindWithTag("PlayerGUI");
     }
 
     private void Update()
@@ -38,7 +38,7 @@ public class LogicController : MonoBehaviour
 
     public void mapPause()
     {
-        cross.SetActive(false);
+        characterCanvas.SetActive(false);
         Time.timeScale = 0;
         pause = true;
         pauseMenu.SetActive(true);
@@ -54,7 +54,7 @@ public class LogicController : MonoBehaviour
     public void resume()
     {
         pauseMenu.SetActive(false);
-        cross.SetActive(true);
+        characterCanvas.SetActive(true);
         pause = false;
         Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;

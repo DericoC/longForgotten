@@ -29,27 +29,29 @@ public class NavMeshController : MonoBehaviour
     //Maneja todas las animaciones en base a los estados del enemigo
     private void animationsController()
     {
-        StartIdle();
-        if (!isPlayerDead)
-        {
-            if (agent.remainingDistance <= 1)
+        if (!animator.GetBool("IsDead")) {
+            StartIdle();
+            if (!isPlayerDead)
             {
-                StopChase();
-                StopWalk();
-                Attack();
+                if (agent.remainingDistance <= 1)
+                {
+                    StopChase();
+                    StopWalk();
+                    Attack();
+                }
+                else if (agent.remainingDistance <= 10)
+                {
+                    StopChase();
+                    StartWalk();
+                }
+                else if (agent.remainingDistance >= 11)
+                {
+                    StopWalk();
+                    StartChase();
+                }
+                animator.SetFloat("Speed", agent.speed);
+                agent.destination = player.position;
             }
-            else if (agent.remainingDistance <= 10)
-            {
-                StopChase();
-                StartWalk();
-            }
-            else if (agent.remainingDistance >= 11)
-            {
-                StopWalk();
-                StartChase();
-            }
-            animator.SetFloat("Speed", agent.speed);
-            agent.destination = player.position;
         }
     }
 
@@ -157,6 +159,11 @@ public class NavMeshController : MonoBehaviour
     {
         StopRun();
         agent.speed = agentSpeed;
+    }
+
+    public void triggerDead() {
+        agent.isStopped = true;
+        animator.SetBool("IsDead", true);
     }
 
     #endregion
