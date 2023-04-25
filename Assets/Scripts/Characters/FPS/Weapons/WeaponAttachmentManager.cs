@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     /// <summary>
     /// Weapon Attachment Manager. Handles equipping and storing a Weapon's Attachments.

@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack.Interface
+namespace LF.LongForgotten.Interface
 {
     /// <summary>
     /// Interface component that hides or shows the tutorial text based on input.

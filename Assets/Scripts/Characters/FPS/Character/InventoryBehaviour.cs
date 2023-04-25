@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     /// <summary>
     /// Abstract Inventory Class. Helpful so you can implement your own inventory system!

@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack.Interface
+namespace LF.LongForgotten.Interface
 {
     /// <summary>
     /// Player Interface.

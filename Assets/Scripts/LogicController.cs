@@ -6,12 +6,14 @@ using UnityEngine.SceneManagement;
 public class LogicController : MonoBehaviour
 {
     [SerializeField] GameObject pauseMenu;
+    private LF.LongForgotten.Character player;
     private GameObject characterCanvas;
     private bool pause;
 
     private void Start()
     {
         characterCanvas = GameObject.FindWithTag("PlayerGUI");
+        player = GameObject.FindWithTag("Player").GetComponent<LF.LongForgotten.Character>();
     }
 
     private void Update()
@@ -39,6 +41,7 @@ public class LogicController : MonoBehaviour
     public void mapPause()
     {
         characterCanvas.SetActive(false);
+        player.CursorLocked = false;
         Time.timeScale = 0;
         pause = true;
         pauseMenu.SetActive(true);
@@ -55,17 +58,10 @@ public class LogicController : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         characterCanvas.SetActive(true);
+        player.CursorLocked = true;
         pause = false;
         Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    void resumeTimeScale()
-    {
-        if (Time.timeScale == 0)
-        {
-            Time.timeScale = 1;
-        }
     }
 
     //Getter / Setter

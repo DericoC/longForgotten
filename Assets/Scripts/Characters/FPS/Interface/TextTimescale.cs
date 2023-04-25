@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack.Interface
+namespace LF.LongForgotten.Interface
 {
     /// <summary>
     /// Component that changes a text to match the current time scale.

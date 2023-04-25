@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace InfimaGames.LowPolyShooterPack.Interface
+namespace LF.LongForgotten.Interface
 {
     /// <summary>
     /// Total Ammunition Text.

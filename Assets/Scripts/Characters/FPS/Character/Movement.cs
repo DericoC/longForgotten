@@ -3,7 +3,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
     public class Movement : MovementBehaviour

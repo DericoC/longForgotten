@@ -1,13 +1,7 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿using UnityEngine;
 
-using UnityEngine;
-
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
-	/// <summary>
-	/// This class is helpful when adding weapons alone in the scene that are playing animations.
-	/// As, without it, the animation events would not have a receiver, and thus create errors!
-	/// </summary>
 	public class AnimationReceiver : MonoBehaviour
 	{
 		#region ANIMATION

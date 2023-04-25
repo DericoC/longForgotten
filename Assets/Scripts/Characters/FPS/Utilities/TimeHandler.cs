@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     /// <summary>
     /// Time Manager.

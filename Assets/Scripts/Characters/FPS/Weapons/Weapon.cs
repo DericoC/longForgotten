@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     /// <summary>
     /// Weapon. This class handles most of the things that weapons need.

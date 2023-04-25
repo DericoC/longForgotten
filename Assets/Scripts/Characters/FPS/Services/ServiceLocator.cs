@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     /// <summary>
     /// Simple service locator for <see cref="IGameService"/> instances.

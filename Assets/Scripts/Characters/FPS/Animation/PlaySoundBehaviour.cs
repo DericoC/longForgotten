@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     /// <summary>
     /// Play Sound Behaviour. Plays an AudioClip using our custom AudioManager!

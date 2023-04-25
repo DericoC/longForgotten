@@ -13,12 +13,12 @@ public class DoorControl : MonoBehaviour
     private TextMeshProUGUI doorTextMeshPro;
     private bool isOpen = false;
     private Animator animator;
-    private InfimaGames.LowPolyShooterPack.Character player;
+    private LF.LongForgotten.Character player;
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<InfimaGames.LowPolyShooterPack.Character>();
+        player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<LF.LongForgotten.Character>();
         doorTextObject = transform.GetChild(0).gameObject;
         doorTextMeshPro = doorTextObject.GetComponentInChildren<TextMeshProUGUI>();
     }
@@ -70,7 +70,7 @@ public class DoorControl : MonoBehaviour
             {
                 animator.Play("DoorFall");
             }
-            destroyAfterAnimation(2f);
+            StartCoroutine(destroyAfterAnimation(2f));
         }
     }
 
@@ -91,7 +91,7 @@ public class DoorControl : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && player != null)
         {
             if (!isOpen)
             {
@@ -102,7 +102,7 @@ public class DoorControl : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && player != null)
         {
             player.DoorInteraction(gameObject.GetComponent<DoorControl>());
         }
@@ -110,7 +110,7 @@ public class DoorControl : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && player != null)
         {
             if (!isOpen)
             {
@@ -119,9 +119,10 @@ public class DoorControl : MonoBehaviour
         }
     }
 
-    private async void destroyAfterAnimation(float delaySeconds)
+    private IEnumerator destroyAfterAnimation(float delaySeconds)
     {
-        await Task.Delay((int)(delaySeconds * 1000));
+        GetComponent<Collider>().enabled = false;
+        yield return new WaitForSeconds(delaySeconds);
         Destroy(gameObject);
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     public static class LoopUtils
     {

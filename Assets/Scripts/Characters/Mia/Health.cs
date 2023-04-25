@@ -9,26 +9,48 @@ public class Health : MonoBehaviour
     [SerializeField] int lives = 5;
     [SerializeField] bool _protected = false;
     [SerializeField] float protectedTime = 0.5f;
-    [SerializeField] float waitTime = 0.2f;
     [SerializeField] GameObject gameOverPanel;
+    private LF.LongForgotten.Character player;
     private LogicController logicController;
     public static bool dead = false;
 
     private void Start()
     {
         logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
+        player = GameObject.FindWithTag("Player").GetComponent<LF.LongForgotten.Character>();
+        Time.timeScale = 1;
     }
 
     private void Update()
     {
-        if (!logicController.Pause) {
-            if (lives == 0)
-            {
-                dead = true;
-                GetComponent<PlayerInput>().enabled = false;
-                gameOverPanel.SetActive(true);
-                Cursor.lockState = CursorLockMode.None;
-            }
+        if (logicController.Pause)
+        {
+            GetComponent<PlayerInput>().enabled = false;
+        }
+        else if (!logicController.Pause)
+        {
+            GetComponent<PlayerInput>().enabled = true;
+        }
+
+        CheckIfAlive();
+    }
+
+    private void CheckIfAlive()
+    {
+        if (lives > 0)
+        {
+            dead = false;
+            GetComponent<PlayerInput>().enabled = true;
+            gameOverPanel.SetActive(false);
+        }
+        else if (lives == 0)
+        {
+            dead = true;
+            GetComponent<PlayerInput>().enabled = false;
+            gameOverPanel.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            player.CursorLocked = false;
+            Time.timeScale = 0;
         }
     }
 
@@ -44,17 +66,6 @@ public class Health : MonoBehaviour
     public int getLives()
     {
         return lives;
-    }
-
-    public void restartGame()
-    {
-        PlayerPrefs.DeleteAll();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void resume()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     IEnumerator Protect()

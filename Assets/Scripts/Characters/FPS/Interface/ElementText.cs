@@ -3,7 +3,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace InfimaGames.LowPolyShooterPack.Interface
+namespace LF.LongForgotten.Interface
 {
     /// <summary>
     /// Text Interface Element.

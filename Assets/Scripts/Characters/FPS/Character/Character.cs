@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine.InputSystem;
 using System.Threading.Tasks;
 
-namespace InfimaGames.LowPolyShooterPack
+namespace LF.LongForgotten
 {
     [RequireComponent(typeof(CharacterKinematics))]
     public sealed class Character : CharacterBehaviour
@@ -12,7 +12,6 @@ namespace InfimaGames.LowPolyShooterPack
         #region FIELDS SERIALIZED
 
         [Header("Inventory")]
-
         [Tooltip("Inventory.")]
         [SerializeField]
         private InventoryBehaviour inventory;
@@ -29,7 +28,7 @@ namespace InfimaGames.LowPolyShooterPack
         [SerializeField]
         private float dampTimeLocomotion = 0.15f;
 
-        [Tooltip("How smoothly we play aiming transitions. Beware that this affects lots of things!")]
+        [Tooltip("How smoothly we play aiming transitions. Beware that this affects lots of things.")]
         [SerializeField]
         private float dampTimeAiming = 0.3f;
 
@@ -597,18 +596,14 @@ namespace InfimaGames.LowPolyShooterPack
 
         //Getters // Setters
         public override Camera GetCameraWorld() => cameraWorld;
-
         public override InventoryBehaviour GetInventory() => inventory;
-
         public override bool IsCrosshairVisible() => !aiming && !holstered;
         public override bool IsRunning() => running;
-
         public override bool IsAiming() => aiming;
         public override bool IsCursorLocked() => cursorLocked;
-
         public override bool IsTutorialTextVisible() => tutorialTextVisible;
-
         public override Vector2 GetInputMovement() => axisMovement;
         public override Vector2 GetInputLook() => axisLook;
+        public bool CursorLocked { get => cursorLocked; set => cursorLocked = value; }
     }
 }
