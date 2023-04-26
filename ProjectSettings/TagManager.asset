@@ -36,6 +36,7 @@ TagManager:
   - DamageGUI
   - DamagePos
   - ScoreController
+  - ScoreUI
   layers:
   - Default
   - TransparentFX
