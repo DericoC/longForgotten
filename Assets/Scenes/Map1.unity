@@ -836,7 +836,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 454524, guid: 62e80a053a5f7c94f9f4c90bc293e432, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 454524, guid: 62e80a053a5f7c94f9f4c90bc293e432, type: 3}
       propertyPath: m_LocalScale.x
@@ -1073,6 +1073,7 @@ MonoBehaviour:
   maxEnemiesPerSpawner: 3
   spawnDelay: 10
   roundDelay: 10
+  currentRound: 1
 --- !u!4 &135341571
 Transform:
   m_ObjectHideFlags: 0
@@ -6834,7 +6835,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 492256, guid: ba67efa6dcab9a54aac7e607f17f759c, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 492256, guid: ba67efa6dcab9a54aac7e607f17f759c, type: 3}
       propertyPath: m_LocalScale.x
@@ -9941,7 +9942,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 454524, guid: 62e80a053a5f7c94f9f4c90bc293e432, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 454524, guid: 62e80a053a5f7c94f9f4c90bc293e432, type: 3}
       propertyPath: m_LocalScale.x
@@ -10351,7 +10352,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 492256, guid: ba67efa6dcab9a54aac7e607f17f759c, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 492256, guid: ba67efa6dcab9a54aac7e607f17f759c, type: 3}
       propertyPath: m_LocalScale.x

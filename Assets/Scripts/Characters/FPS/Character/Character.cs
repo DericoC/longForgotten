@@ -38,6 +38,10 @@ namespace LF.LongForgotten
         [SerializeField]
         private Animator characterAnimator;
 
+        [SerializeField]
+        private SpawnerController controllerSpawn;
+
+
         #endregion
 
         #region FIELDS
@@ -47,10 +51,12 @@ namespace LF.LongForgotten
         private bool aiming;
         private bool running;
         private bool holstered;
+        private bool changeShot = false;
         private float lastShotTime;
         private int layerOverlay;
         private int layerHolster;
         private int layerActions;
+        private int round;
         private CharacterKinematics characterKinematics;
         private WeaponBehaviour equippedWeapon;
         private WeaponAttachmentManagerBehaviour weaponAttachmentManager;
@@ -102,6 +108,8 @@ namespace LF.LongForgotten
         {
             aiming = holdingButtonAim && CanAim();
             running = holdingButtonRun && CanRun();
+            controllerSpawn = FindObjectOfType<SpawnerController>();
+
 
             if (holdingButtonFire)
             {
@@ -114,6 +122,16 @@ namespace LF.LongForgotten
 
             UpdateAnimator();
             DoorController();
+
+            round = controllerSpawn.currentRound;
+            if (round == 5)
+            {
+                if (changeShot == false)
+                {
+                    StartCoroutine(nameof(Equip), 1);
+                    changeShot = true;
+                }
+            }
         }
 
         protected override void LateUpdate()
@@ -436,17 +454,20 @@ namespace LF.LongForgotten
             if (inventory == null)
                 return;
 
-            switch (context)
+            if (round >= 5)
             {
-                case { phase: InputActionPhase.Performed }:
-                    float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2)) ? Mathf.Sign(context.ReadValue<Vector2>().y) : 1.0f;
+                switch (context)
+                {
+                    case { phase: InputActionPhase.Performed }:
+                        float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2)) ? Mathf.Sign(context.ReadValue<Vector2>().y) : 1.0f;
 
-                    int indexNext = scrollValue > 0 ? inventory.GetNextIndex() : inventory.GetLastIndex();
-                    int indexCurrent = inventory.GetEquippedIndex();
+                        int indexNext = scrollValue > 0 ? inventory.GetNextIndex() : inventory.GetLastIndex();
+                        int indexCurrent = inventory.GetEquippedIndex();
 
-                    if (CanChangeWeapon() && (indexCurrent != indexNext))
-                        StartCoroutine(nameof(Equip), indexNext);
-                    break;
+                        if (CanChangeWeapon() && (indexCurrent != indexNext))
+                            StartCoroutine(nameof(Equip), indexNext);
+                        break;
+                }
             }
         }
 

@@ -10,10 +10,10 @@ public class SpawnerController : MonoBehaviour
     public int maxEnemiesPerSpawner = 3; // maximum number of enemies to spawn per spawner
     public float spawnDelay = 10f; // delay between spawns of the same spawner
     public float roundDelay = 10f; // delay between rounds
+    public int currentRound = 1; // current round number
 
     private GameObject[] spawners; // array of game objects with the "ZombieSpawner" tag
     private GameObject player; // reference to the player object
-    private int currentRound = 1; // current round number
 
     private void Start()
     {
