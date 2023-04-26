@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class ScoreController : MonoBehaviour
 {
     [SerializeField]
-    public int score = 0;
+    private int score = 0;
 
     [SerializeField]
     public Text scoreText;
@@ -15,6 +15,7 @@ public class ScoreController : MonoBehaviour
     [SerializeField]
     public Text timeText;
 
+    private bool hasUnlockedGun = false;
     private float gameTimer = 0.0f;
     private string timeString;
 
@@ -22,6 +23,7 @@ public class ScoreController : MonoBehaviour
     {
         UpdateTimer();
         updateText();
+        passedMilestone();
     }
 
     void UpdateTimer()
@@ -38,4 +40,14 @@ public class ScoreController : MonoBehaviour
         scoreText.text = "Score: " + score;
         timeText.text = "Time: " + timeString;
     }
+
+    void passedMilestone() {
+        if (!hasUnlockedGun && score >= 1500) {
+            hasUnlockedGun = true;
+        }
+    }
+
+    //Getters / Setters
+    public int Score { get => score; set => score = value; }
+    public bool HasUnlockedGun { get => hasUnlockedGun; set => hasUnlockedGun = value; }
 }

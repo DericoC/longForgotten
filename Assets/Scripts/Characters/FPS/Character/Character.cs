@@ -134,29 +134,27 @@ namespace LF.LongForgotten
         #region FIELDS
 
         private bool[] keys;
-        private bool isPressingDoorOpen = false;        private bool aiming;        private bool wasAiming;        private bool running;        private bool holstered;
-
-        private bool changeShot = false;
+        private bool isPressingDoorOpen = false; private bool aiming; private bool wasAiming; private bool running; private bool holstered;
+        private bool gunUnlocked = false;
         private float lastShotTime;
-        private int layerOverlay;        private int layerHolster;        private int layerActions;
-
-        private int round;
+        private int layerOverlay; private int layerHolster; private int layerActions;
+        private ScoreController scoreController;
         private MovementBehaviour movementBehaviour;
-        private WeaponBehaviour equippedWeapon;        private WeaponAttachmentManagerBehaviour weaponAttachmentManager;
-        private ScopeBehaviour equippedWeaponScope;        private MagazineBehaviour equippedWeaponMagazine;
+        private WeaponBehaviour equippedWeapon; private WeaponAttachmentManagerBehaviour weaponAttachmentManager;
+        private ScopeBehaviour equippedWeaponScope; private MagazineBehaviour equippedWeaponMagazine;
         private bool reloading;
-        private bool inspecting;        private bool throwingGrenade;
+        private bool inspecting; private bool throwingGrenade;
         private bool meleeing;
         private bool holstering;
         private float aimingAlpha;
-        private float crouchingAlpha;        private float runningAlpha;
+        private float crouchingAlpha; private float runningAlpha;
         private Vector2 axisLook;
         private Vector2 axisMovement;
         private bool bolting;
         private int grenadeCount;
-        private bool holdingButtonAim;        private bool holdingButtonRun;        private bool holdingButtonFire;
+        private bool holdingButtonAim; private bool holdingButtonRun; private bool holdingButtonFire;
         private bool tutorialTextVisible;
-        private bool cursorLocked;        private int shotsFired;
+        private bool cursorLocked; private int shotsFired;
 
         #endregion
 
@@ -172,15 +170,12 @@ namespace LF.LongForgotten
 
             #endregion
 
-
+            scoreController = GameObject.FindWithTag("ScoreController").GetComponent<ScoreController>();
             movementBehaviour = GetComponent<MovementBehaviour>();
-
-
             inventory.Init(weaponIndexEquippedAtStart);
-
-
             RefreshWeaponSetup();
-        }        protected override void Start()
+        }
+        protected override void Start()
         {
 
             grenadeCount = grenadeTotal;
@@ -240,18 +235,13 @@ namespace LF.LongForgotten
             UpdateAnimator();
             DoorController();
 
-            round = controllerSpawn.CurrentRound;
-            if (round == 5)
-            {
-                if (changeShot == false)
-                {
-                    StartCoroutine(nameof(Equip), 1);
-            changeShot = true;
-        }
-    }
+            if (!gunUnlocked && scoreController.HasUnlockedGun) {
+                gunUnlocked = true;
+                StartCoroutine(nameof(Equip), 1);
+            }
 
 
-    aimingAlpha = characterAnimator.GetFloat(AHashes.AimingAlpha);
+            aimingAlpha = characterAnimator.GetFloat(AHashes.AimingAlpha);
 
 
             crouchingAlpha = Mathf.Lerp(crouchingAlpha, movementBehaviour.IsCrouching() ? 1.0f : 0.0f, Time.deltaTime * 12.0f);
@@ -286,19 +276,19 @@ namespace LF.LongForgotten
         public override Camera GetCameraWorld() => cameraWorld;
         public override Camera GetCameraDepth() => cameraDepth;
         public override InventoryBehaviour GetInventory() => inventory;
-        public override int GetGrenadesCurrent() => grenadeCount;        public override int GetGrenadesTotal() => grenadeTotal;
+        public override int GetGrenadesCurrent() => grenadeCount; public override int GetGrenadesTotal() => grenadeTotal;
 
-        public override bool IsRunning() => running;        public override bool IsHolstered() => holstered;
+        public override bool IsRunning() => running; public override bool IsHolstered() => holstered;
         public override bool IsCrouching() => movementBehaviour.IsCrouching();
         public override bool IsReloading() => reloading;
         public override bool IsThrowingGrenade() => throwingGrenade;
 
         public override bool IsMeleeing() => meleeing;
-        public override bool IsAiming() => aiming;        public override bool IsCursorLocked() => cursorLocked;
+        public override bool IsAiming() => aiming; public override bool IsCursorLocked() => cursorLocked;
         public override bool IsTutorialTextVisible() => tutorialTextVisible;
-        public override Vector2 GetInputMovement() => axisMovement;        public override Vector2 GetInputLook() => axisLook;
-        public override AudioClip[] GetAudioClipsGrenadeThrow() => audioClipsGrenadeThrow;        public override AudioClip[] GetAudioClipsMelee() => audioClipsMelee;
-        public override bool IsInspecting() => inspecting;        public override bool IsHoldingButtonFire() => holdingButtonFire;
+        public override Vector2 GetInputMovement() => axisMovement; public override Vector2 GetInputLook() => axisLook;
+        public override AudioClip[] GetAudioClipsGrenadeThrow() => audioClipsGrenadeThrow; public override AudioClip[] GetAudioClipsMelee() => audioClipsMelee;
+        public override bool IsInspecting() => inspecting; public override bool IsHoldingButtonFire() => holdingButtonFire;
 
         #endregion
 
@@ -366,13 +356,15 @@ namespace LF.LongForgotten
             characterAnimator.SetBool(AHashes.Running, running);
 
             characterAnimator.SetBool(AHashes.Crouching, movementBehaviour.IsCrouching());
-        }        private void Inspect()
+        }
+        private void Inspect()
         {
 
             inspecting = true;
 
             characterAnimator.CrossFade("Inspect", 0.0f, layerActions, 0);
-        }        private void Fire()
+        }
+        private void Fire()
         {
 
 
@@ -413,7 +405,8 @@ namespace LF.LongForgotten
 
 
             equippedWeapon.Reload();
-        }        private IEnumerator TryReloadAutomatic()
+        }
+        private IEnumerator TryReloadAutomatic()
         {
 
             yield return new WaitForSeconds(equippedWeapon.GetAutomaticallyReloadOnEmptyDelay());
@@ -440,7 +433,8 @@ namespace LF.LongForgotten
             inventory.Equip(index);
 
             RefreshWeaponSetup();
-        }        private void RefreshWeaponSetup()
+        }
+        private void RefreshWeaponSetup()
         {
 
             if ((equippedWeapon = inventory.GetEquipped()) == null)
@@ -466,7 +460,8 @@ namespace LF.LongForgotten
             lastShotTime = Time.time;
 
             characterAnimator.CrossFade("Fire Empty", 0.05f, layerOverlay, 0);
-        }        private void UpdateCursorState()
+        }
+        private void UpdateCursorState()
         {
 
             Cursor.visible = !cursorLocked;
@@ -485,7 +480,8 @@ namespace LF.LongForgotten
 
             characterAnimator.CrossFade("Grenade Throw", 0.05f,
                 characterAnimator.GetLayerIndex("Layer Actions Arm Right"), 0.0f);
-        }        private void PlayMelee()
+        }
+        private void PlayMelee()
         {
 
             meleeing = true;
@@ -502,7 +498,8 @@ namespace LF.LongForgotten
         {
 
             characterAnimator.SetBool(AHashes.Bolt, bolting = value);
-        }        private void SetHolstered(bool value = true)
+        }
+        private void SetHolstered(bool value = true)
         {
 
             holstered = value;
@@ -776,7 +773,8 @@ namespace LF.LongForgotten
                     shotsFired = 0;
                     break;
             }
-        }        public void OnTryPlayReload(InputAction.CallbackContext context)
+        }
+        public void OnTryPlayReload(InputAction.CallbackContext context)
         {
 
             if (!cursorLocked)
@@ -815,7 +813,8 @@ namespace LF.LongForgotten
                     Inspect();
                     break;
             }
-        }        public void OnTryAiming(InputAction.CallbackContext context)
+        }
+        public void OnTryAiming(InputAction.CallbackContext context)
         {
 
             if (!cursorLocked)
@@ -876,7 +875,8 @@ namespace LF.LongForgotten
                     holstering = true;
                     break;
             }
-        }        public void OnTryThrowGrenade(InputAction.CallbackContext context)
+        }
+        public void OnTryThrowGrenade(InputAction.CallbackContext context)
         {
 
             if (!cursorLocked)
@@ -909,7 +909,8 @@ namespace LF.LongForgotten
                         PlayMelee();
                     break;
             }
-        }        public void OnTryRun(InputAction.CallbackContext context)
+        }
+        public void OnTryRun(InputAction.CallbackContext context)
         {
 
             if (!cursorLocked)
@@ -953,7 +954,8 @@ namespace LF.LongForgotten
                     movementBehaviour.Jump();
                     break;
             }
-        }        public void OnTryInventoryNext(InputAction.CallbackContext context)
+        }
+        public void OnTryInventoryNext(InputAction.CallbackContext context)
         {
 
             if (!cursorLocked)
@@ -964,7 +966,7 @@ namespace LF.LongForgotten
                 return;
 
 
-            if (round >= 5)
+            if (scoreController.Score >= 1500)
             {
                 switch (context)
                 {
@@ -985,7 +987,7 @@ namespace LF.LongForgotten
                         break;
                 }
             }
-        }
+    }
 
         public void OnLockCursor(InputAction.CallbackContext context)
         {
@@ -1005,7 +1007,8 @@ namespace LF.LongForgotten
         {
 
             axisMovement = cursorLocked ? context.ReadValue<Vector2>() : default;
-        }        public void OnLook(InputAction.CallbackContext context)
+        }
+        public void OnLook(InputAction.CallbackContext context)
         {
 
             axisLook = cursorLocked ? context.ReadValue<Vector2>() : default;
@@ -1043,12 +1046,14 @@ namespace LF.LongForgotten
 
             if (equippedWeapon != null)
                 equippedWeapon.EjectCasing();
-        }        public override void FillAmmunition(int amount)
+        }
+        public override void FillAmmunition(int amount)
         {
 
             if (equippedWeapon != null)
                 equippedWeapon.FillAmmunition(amount);
-        }        public override void Grenade()
+        }
+        public override void Grenade()
         {
 
             if (grenadePrefab == null)
@@ -1069,7 +1074,8 @@ namespace LF.LongForgotten
             position += cTransform.forward * grenadeSpawnOffset;
 
             Instantiate(grenadePrefab, position, cTransform.rotation);
-        }        public override void SetActiveMagazine(int active)
+        }
+        public override void SetActiveMagazine(int active)
         {
 
             equippedWeaponMagazine.gameObject.SetActive(active != 0);
@@ -1078,7 +1084,8 @@ namespace LF.LongForgotten
         {
 
             UpdateBolt(false);
-        }        public override void AnimationEndedReload()
+        }
+        public override void AnimationEndedReload()
         {
 
             reloading = false;
@@ -1087,7 +1094,8 @@ namespace LF.LongForgotten
         {
 
             throwingGrenade = false;
-        }        public override void AnimationEndedMelee()
+        }
+        public override void AnimationEndedMelee()
         {
 
             meleeing = false;
@@ -1096,7 +1104,8 @@ namespace LF.LongForgotten
         {
 
             inspecting = false;
-        }        public override void AnimationEndedHolster()
+        }
+        public override void AnimationEndedHolster()
         {
 
             holstering = false;

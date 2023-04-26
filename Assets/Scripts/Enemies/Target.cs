@@ -127,7 +127,7 @@ public class Target : MonoBehaviour {
     private void UpdatePlayerScore(int Amount)
     {
         var Score = GameObject.Find("ScoreController");
-        Score.GetComponent<ScoreController>().score += Amount;
+        Score.GetComponent<ScoreController>().Score += Amount;
     }
 
     IEnumerator protection() {
