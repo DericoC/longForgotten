@@ -1,4 +1,4 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿//Copyright 2022, Infima Games. All Rights Reserved.
 
 using UnityEngine;
 using System.Collections;
@@ -12,7 +12,7 @@ namespace LF.LongForgotten
     {
         #region FIELDS SERIALIZED
 
-        [Header("Settings")]
+        [Title(label: "Settings")]
         
         [Tooltip("Socket at the tip of the Muzzle. Commonly used as a firing point.")]
         [SerializeField]
@@ -26,7 +26,7 @@ namespace LF.LongForgotten
         [SerializeField]
         private AudioClip audioClipFire;
         
-        [Header("Particles")]
+        [Title(label: "Particles")]
         
         [Tooltip("Firing Particles.")]
         [SerializeField]
@@ -36,7 +36,7 @@ namespace LF.LongForgotten
         [SerializeField]
         private int flashParticlesCount = 5;
 
-        [Header("Flash Light")]
+        [Title(label: "Flash Light")]
 
         [Tooltip("Muzzle Flash Prefab. A small light we use when firing.")]
         [SerializeField]

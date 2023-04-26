@@ -10,7 +10,7 @@ public class SpawnerController : MonoBehaviour
     public int maxEnemiesPerSpawner = 3; // maximum number of enemies to spawn per spawner
     public float spawnDelay = 10f; // delay between spawns of the same spawner
     public float roundDelay = 10f; // delay between rounds
-    public int currentRound = 1; // current round number
+    private int currentRound = 1; // current round number
 
     private GameObject[] spawners; // array of game objects with the "ZombieSpawner" tag
     private GameObject player; // reference to the player object
@@ -66,6 +66,7 @@ public class SpawnerController : MonoBehaviour
 
         // increment the current round
         currentRound++;
+        Debug.Log(currentRound);
         //increase difficulty
         DifficultyIncrease();
 
@@ -83,4 +84,7 @@ public class SpawnerController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
     }
+
+    //Getter / Setter
+    public int CurrentRound { get => currentRound; set => currentRound = value; }
 }

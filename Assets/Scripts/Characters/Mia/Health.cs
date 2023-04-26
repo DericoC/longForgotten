@@ -10,6 +10,8 @@ public class Health : MonoBehaviour
     [SerializeField] bool _protected = false;
     [SerializeField] float protectedTime = 0.5f;
     [SerializeField] GameObject gameOverPanel;
+    [SerializeField] AudioClip[] hurtSounds;
+    private AudioSource audioSource;
     private LF.LongForgotten.Character player;
     private LogicController logicController;
     public static bool dead = false;
@@ -18,6 +20,7 @@ public class Health : MonoBehaviour
     {
         logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
         player = GameObject.FindWithTag("Player").GetComponent<LF.LongForgotten.Character>();
+        audioSource = player.GetComponent<AudioSource>();
         Time.timeScale = 1;
     }
 
@@ -59,6 +62,7 @@ public class Health : MonoBehaviour
         if (!_protected && lives > 0)
         {
             lives -= damage;
+            hurtSound();
             StartCoroutine(Protect());
         }
     }
@@ -66,6 +70,10 @@ public class Health : MonoBehaviour
     public int getLives()
     {
         return lives;
+    }
+
+    private void hurtSound() {
+        audioSource.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], 0.8f);
     }
 
     IEnumerator Protect()

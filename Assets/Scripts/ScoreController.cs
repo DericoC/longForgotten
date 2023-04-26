@@ -1,24 +1,26 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScoreController : MonoBehaviour
 {
+    [SerializeField]
     public int score = 0;
 
+    [SerializeField]
+    public Text scoreText;
+
+    [SerializeField]
+    public Text timeText;
+
     private float gameTimer = 0.0f;
-    public GameObject ScoreComponent;
-    private TextMeshProUGUI scoreText;
     private string timeString;
 
     private void Update()
     {
-        scoreText = ScoreComponent.GetComponent<TextMeshProUGUI>();
-
         UpdateTimer();
-
         updateText();
     }
 
@@ -33,6 +35,7 @@ public class ScoreController : MonoBehaviour
 
     void updateText()
     {
-        scoreText.text = "Score: " + score + "\nTime: " + timeString;
+        scoreText.text = "Score: " + score;
+        timeText.text = "Time: " + timeString;
     }
 }

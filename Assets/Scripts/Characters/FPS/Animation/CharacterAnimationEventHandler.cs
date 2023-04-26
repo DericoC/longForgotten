@@ -1,4 +1,4 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿//Copyright 2022, Infima Games. All Rights Reserved.
 
 using UnityEngine;
 
@@ -55,6 +55,9 @@ namespace LF.LongForgotten
 		/// </summary>
 		private void OnSetActiveKnife(int active)
 		{
+			//Notify the character.
+			if(playerCharacter != null)
+				playerCharacter.SetActiveKnife(active);
 		}
 		
 		/// <summary>
@@ -62,6 +65,9 @@ namespace LF.LongForgotten
 		/// </summary>
 		private void OnGrenade()
 		{
+			//Notify the character.
+			if(playerCharacter != null)
+				playerCharacter.Grenade();
 		}
 		/// <summary>
 		/// Sets the equipped weapon's magazine to be active or inactive! This function is called from an Animation Event.
@@ -78,6 +84,9 @@ namespace LF.LongForgotten
 		/// </summary>
 		private void OnAnimationEndedBolt()
 		{
+			//Notify the character.
+			if(playerCharacter != null)
+				playerCharacter.AnimationEndedBolt();
 		}
 		/// <summary>
 		/// Reload Animation Ended. This function is called from an Animation Event.
@@ -94,12 +103,18 @@ namespace LF.LongForgotten
 		/// </summary>
 		private void OnAnimationEndedGrenadeThrow()
 		{
+			//Notify the character.
+			if(playerCharacter != null)
+				playerCharacter.AnimationEndedGrenadeThrow();
 		}
 		/// <summary>
 		/// Melee Animation Ended. This function is called from an Animation Event.
 		/// </summary>
 		private void OnAnimationEndedMelee()
 		{
+			//Notify the character.
+			if(playerCharacter != null)
+				playerCharacter.AnimationEndedMelee();
 		}
 
 		/// <summary>
@@ -126,6 +141,9 @@ namespace LF.LongForgotten
 		/// </summary>
 		private void OnSlideBack(int back)
 		{
+			//Notify the character.
+			if(playerCharacter != null)
+				playerCharacter.SetSlideBack(back);
 		}
 
 		#endregion

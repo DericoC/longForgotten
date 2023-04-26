@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//Copyright 2022, Infima Games. All Rights Reserved.
+
+using UnityEngine;
 
 namespace LF.LongForgotten
 {
@@ -9,13 +11,13 @@ namespace LF.LongForgotten
     {
         #region FIELDS SERIALIZED
         
-        [Header("Setup")]
+        [Title(label: "Setup")]
         
         [Tooltip("AudioClip to play!")]
         [SerializeField]
         private AudioClip clip;
         
-        [Header("Settings")]
+        [Title(label: "Settings")]
 
         [Tooltip("Audio Settings.")]
         [SerializeField]

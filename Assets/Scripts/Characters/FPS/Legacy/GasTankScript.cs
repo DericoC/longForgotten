@@ -1,160 +1,176 @@
-﻿using UnityEngine;
+﻿//Copyright 2022, Infima Games. All Rights Reserved.
+
+using UnityEngine;
 using System.Collections;
 
-public class GasTankScript : MonoBehaviour {
+namespace LF.LongForgotten.Legacy
+{
+	public class GasTankScript : MonoBehaviour
+	{
 
-	float randomRotationValue;
-	float randomValue;
+		float randomRotationValue;
+		float randomValue;
 
-	bool routineStarted = false;
+		bool routineStarted = false;
 
-	//Used to check if the gas tank 
-	//has been hit
-	public bool isHit = false;
+		//Used to check if the gas tank 
+		//has been hit
+		public bool isHit = false;
 
-	[Header("Prefabs")]
-	//Explosion prefab
-	public Transform explosionPrefab;
-	//The destroyed gas tank prefab
-	public Transform destroyedGasTankPrefab;
+		[Header("Prefabs")]
+		//Explosion prefab
+		public Transform explosionPrefab;
 
-	[Header("Customizable Options")]
-	//Time before the gas tank explodes, 
-	//after being hit
-	public float explosionTimer;
-	//How fast the gas tank rotates
-	public float rotationSpeed;
-	//The maximum rotation speed of the
-	//gast tank
-	public float maxRotationSpeed;
-	//How fast the gast tank moves
-	public float moveSpeed;
-	//How fast the audio pitch should increase
-	public float audioPitchIncrease = 0.5f;
+		//The destroyed gas tank prefab
+		public Transform destroyedGasTankPrefab;
 
-	[Header("Explosion Options")]
-	//How far the explosion will reach
-	public float explosionRadius = 12.5f;
-	//How powerful the explosion is
-	public float explosionForce = 4000.0f;
+		[Header("Customizable Options")]
+		//Time before the gas tank explodes, 
+		//after being hit
+		public float explosionTimer;
 
-	[Header("Light")]
-	public Light lightObject;
+		//How fast the gas tank rotates
+		public float rotationSpeed;
 
-	[Header("Particle Systems")]
-	public ParticleSystem flameParticles;
-	public ParticleSystem smokeParticles;
+		//The maximum rotation speed of the
+		//gast tank
+		public float maxRotationSpeed;
 
-	[Header("Audio")]
-	public AudioSource flameSound;
-	public AudioSource impactSound;
-	//Used to check if the audio has played
-	bool audioHasPlayed = false;
-	
-	private void Start () {
-		//Make sure the light is off at start
-		lightObject.intensity = 0;
-		//Get a random value for the rotation
-		randomValue = Random.Range (-50, 50);
-	}
+		//How fast the gast tank moves
+		public float moveSpeed;
 
-	private void Update () {
-		//If the gas tank is hit
-		if (isHit == true) 
+		//How fast the audio pitch should increase
+		public float audioPitchIncrease = 0.5f;
+
+		[Header("Explosion Options")]
+		//How far the explosion will reach
+		public float explosionRadius = 12.5f;
+
+		//How powerful the explosion is
+		public float explosionForce = 4000.0f;
+
+		[Header("Light")]
+		public Light lightObject;
+
+		[Header("Particle Systems")]
+		public ParticleSystem flameParticles;
+
+		public ParticleSystem smokeParticles;
+
+		[Header("Audio")]
+		public AudioSource flameSound;
+
+		public AudioSource impactSound;
+
+		//Used to check if the audio has played
+		bool audioHasPlayed = false;
+
+		private void Start()
 		{
-			//Start increasing the rotation speed over time
-			randomRotationValue += 1.0f * Time.deltaTime;
+			//Make sure the light is off at start
+			lightObject.intensity = 0;
+			//Get a random value for the rotation
+			randomValue = Random.Range(-50, 50);
+		}
 
-			//If the random rotation is higher than the maximum rotation, 
-			//set it to the max rotation value
-			if (randomRotationValue > maxRotationSpeed) 
+		private void Update()
+		{
+			//If the gas tank is hit
+			if (isHit == true)
 			{
-				randomRotationValue = maxRotationSpeed;
-			}
+				//Start increasing the rotation speed over time
+				randomRotationValue += 1.0f * Time.deltaTime;
 
-			//Add force to the gas tank 
-			gameObject.GetComponent<Rigidbody>().AddRelativeForce
-				(Vector3.down * moveSpeed * 50 *Time.deltaTime);
+				//If the random rotation is higher than the maximum rotation, 
+				//set it to the max rotation value
+				if (randomRotationValue > maxRotationSpeed)
+				{
+					randomRotationValue = maxRotationSpeed;
+				}
 
-			//Rotate the gas tank, based on the random rotation values
-			transform.Rotate (randomRotationValue,0,randomValue * 
-			                  rotationSpeed * Time.deltaTime); 
+				//Add force to the gas tank 
+				gameObject.GetComponent<Rigidbody>().AddRelativeForce
+					(Vector3.down * moveSpeed * 50 * Time.deltaTime);
 
-			//Play the flame particles
-			flameParticles.Play ();
-			//Play the smoke particles
-			smokeParticles.Play ();
+				//Rotate the gas tank, based on the random rotation values
+				transform.Rotate(randomRotationValue, 0, randomValue *
+				                                         rotationSpeed * Time.deltaTime);
 
-			//Increase the flame sound pitch over time
-			flameSound.pitch += audioPitchIncrease * Time.deltaTime;
+				//Play the flame particles
+				flameParticles.Play();
+				//Play the smoke particles
+				smokeParticles.Play();
 
-			//If the audio has not played, play it
-			if (!audioHasPlayed) 
-			{
-				flameSound.Play ();
-				//Audio has played
-				audioHasPlayed = true;
-			}
+				//Increase the flame sound pitch over time
+				flameSound.pitch += audioPitchIncrease * Time.deltaTime;
 
-			if (routineStarted == false) 
-			{
-				//Start the explode coroutine
-				StartCoroutine(Explode());
-				routineStarted = true;
-				//Set the light intensity to 3
-				lightObject.intensity = 3;
+				//If the audio has not played, play it
+				if (!audioHasPlayed)
+				{
+					flameSound.Play();
+					//Audio has played
+					audioHasPlayed = true;
+				}
+
+				if (routineStarted == false)
+				{
+					//Start the explode coroutine
+					StartCoroutine(Explode());
+					routineStarted = true;
+					//Set the light intensity to 3
+					lightObject.intensity = 3;
+				}
 			}
 		}
-	}
-	private void OnCollisionEnter (Collision collision) {
-		//Play the impact sound on every collision
-		impactSound.Play ();
-	}
 
-	private IEnumerator Explode ()
-	{
-		//Wait for set amount of time
-		yield return new WaitForSeconds(explosionTimer);
-		
-		//Spawn the destroyed gas tank prefab
-		Instantiate (destroyedGasTankPrefab, transform.position, 
-		             transform.rotation); 
-		
-		//Explosion force
-		Vector3 explosionPos = transform.position;
-		Collider[] colliders = Physics.OverlapSphere(explosionPos, explosionRadius);
-		foreach (Collider hit in colliders) 
+		private void OnCollisionEnter(Collision collision)
 		{
-			Rigidbody rb = hit.GetComponent<Rigidbody> ();
-			
-			//Add force to nearby rigidbodies
-			if (rb != null)
-				rb.AddExplosionForce (explosionForce * 50, explosionPos, explosionRadius);
-			
-			//If the gas tank explosion hits other gas tanks with the tag "GasTank"
-			if (hit.transform.tag == "GasTank") {
-				
-				//Toggle the isHit bool on the gas tank object
-				hit.transform.gameObject.GetComponent<GasTankScript>().isHit = true;
-			}
-			//If the gas tank explosion hits any explosive barrel
-			if (hit.transform.tag == "ExplosiveBarrel") {
-				//Toggle explode bool on explosive barrel object
-				hit.transform.gameObject.GetComponent<ExplosiveBarrelScript>().explode = true;
-			}
-            //If the explosion hit the tag "Zombie"
-            if (hit.transform.tag == "Zombie")
-            {
-                //Toggle the isHit bool on the target object
-                hit.transform.gameObject.GetComponent<Target>().isExploded = true;
-            }
-        }
-		
-		//Spawn the explosion prefab
-		Instantiate (explosionPrefab, transform.position, 
-		             transform.rotation); 
+			//Play the impact sound on every collision
+			impactSound.Play();
+		}
 
-		//Destroy the current gas tank object
-		Destroy (gameObject);
+		private IEnumerator Explode()
+		{
+			//Wait for set amount of time
+			yield return new WaitForSeconds(explosionTimer);
+
+			//Spawn the destroyed gas tank prefab
+			Instantiate(destroyedGasTankPrefab, transform.position,
+				transform.rotation);
+
+			//Explosion force
+			Vector3 explosionPos = transform.position;
+			Collider[] colliders = Physics.OverlapSphere(explosionPos, explosionRadius);
+			foreach (Collider hit in colliders)
+			{
+				Rigidbody rb = hit.GetComponent<Rigidbody>();
+
+				//Add force to nearby rigidbodies
+				if (rb != null)
+					rb.AddExplosionForce(explosionForce * 50, explosionPos, explosionRadius);
+
+				//If the gas tank explosion hits other gas tanks with the tag "GasTank"
+				if (hit.transform.tag == "GasTank")
+				{
+
+					//Toggle the isHit bool on the gas tank object
+					hit.transform.gameObject.GetComponent<GasTankScript>().isHit = true;
+				}
+
+				//If the gas tank explosion hits any explosive barrel
+				if (hit.transform.tag == "ExplosiveBarrel")
+				{
+					//Toggle explode bool on explosive barrel object
+					hit.transform.gameObject.GetComponent<ExplosiveBarrelScript>().explode = true;
+				}
+			}
+
+			//Spawn the explosion prefab
+			Instantiate(explosionPrefab, transform.position,
+				transform.rotation);
+
+			//Destroy the current gas tank object
+			Destroy(gameObject);
+		}
 	}
 }

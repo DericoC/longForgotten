@@ -1,4 +1,4 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿//Copyright 2022, Infima Games. All Rights Reserved.
 
 using UnityEngine;
 
@@ -19,16 +19,16 @@ namespace LF.LongForgotten.Interface
         /// <summary>
         /// Player Character.
         /// </summary>
-        protected CharacterBehaviour playerCharacter;
+        protected CharacterBehaviour characterBehaviour;
         /// <summary>
         /// Player Character Inventory.
         /// </summary>
-        protected InventoryBehaviour playerCharacterInventory;
+        protected InventoryBehaviour inventoryBehaviour;
 
         /// <summary>
         /// Equipped Weapon.
         /// </summary>
-        protected WeaponBehaviour equippedWeapon;
+        protected WeaponBehaviour equippedWeaponBehaviour;
         
         #endregion
 
@@ -43,9 +43,9 @@ namespace LF.LongForgotten.Interface
             gameModeService = ServiceLocator.Current.Get<IGameModeService>();
             
             //Get Player Character.
-            playerCharacter = gameModeService.GetPlayerCharacter();
+            characterBehaviour = gameModeService.GetPlayerCharacter();
             //Get Player Character Inventory.
-            playerCharacterInventory = playerCharacter.GetInventory();
+            inventoryBehaviour = characterBehaviour.GetInventory();
         }
         
         /// <summary>
@@ -54,11 +54,11 @@ namespace LF.LongForgotten.Interface
         private void Update()
         {
             //Ignore if we don't have an Inventory.
-            if (Equals(playerCharacterInventory, null))
+            if (Equals(inventoryBehaviour, null))
                 return;
 
             //Get Equipped Weapon.
-            equippedWeapon = playerCharacterInventory.GetEquipped();
+            equippedWeaponBehaviour = inventoryBehaviour.GetEquipped();
             
             //Tick.
             Tick();

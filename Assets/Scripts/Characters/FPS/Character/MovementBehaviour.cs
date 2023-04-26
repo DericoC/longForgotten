@@ -1,40 +1,116 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿
 
 using UnityEngine;
 
 namespace LF.LongForgotten
 {
-    /// <summary>
-    /// Abstract movement class. Handles interactions with the main movement component.
-    /// </summary>
+    
+    
+    
     public abstract class MovementBehaviour : MonoBehaviour
     {
         #region UNITY
 
-        /// <summary>
-        /// Awake.
-        /// </summary>
+        
+        
+        
         protected virtual void Awake(){}
 
-        /// <summary>
-        /// Start.
-        /// </summary>
+        
+        
+        
         protected virtual void Start(){}
 
-        /// <summary>
-        /// Update.
-        /// </summary>
+        
+        
+        
         protected virtual void Update(){}
 
-        /// <summary>
-        /// Fixed Update.
-        /// </summary>
+        
+        
+        
         protected virtual void FixedUpdate(){}
 
-        /// <summary>
-        /// Late Update.
-        /// </summary>
+        
+        
+        
         protected virtual void LateUpdate(){}
+
+        #endregion
+
+        #region GETTERS
+
+        
+        
+        
+        public abstract float GetLastJumpTime();
+        
+        
+        
+        
+        
+        public abstract float GetMultiplierForward();
+        
+        
+        
+        
+        public abstract float GetMultiplierSideways();
+        
+        
+        
+        
+        public abstract float GetMultiplierBackwards();
+
+        
+        
+        
+        public abstract Vector3 GetVelocity();
+        
+        
+        
+        public abstract bool IsGrounded();
+        
+        
+        
+        public abstract bool WasGrounded();
+        
+        
+        
+        
+        public abstract bool IsJumping();
+
+        
+        
+        
+        public abstract bool CanCrouch(bool newCrouching);
+        
+        
+        
+        public abstract bool IsCrouching();
+
+        #endregion
+
+        #region METHODS
+
+        
+        
+        
+        public abstract void Jump();
+        
+        
+        
+        public abstract void Crouch(bool crouching);
+
+        
+        
+        
+        public abstract void TryCrouch(bool value);
+        
+        
+        
+        
+        
+        public abstract void TryToggleCrouch();
 
         #endregion
     }

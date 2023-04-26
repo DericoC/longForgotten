@@ -1,113 +1,168 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿
 
 using UnityEngine;
 
 namespace LF.LongForgotten
 {
-    /// <summary>
-    /// Character Abstract Behaviour.
-    /// </summary>
+    
+    
+    
     public abstract class CharacterBehaviour : MonoBehaviour
     {
         #region UNITY
 
-        /// <summary>
-        /// Awake.
-        /// </summary>
         protected virtual void Awake(){}
-
-        /// <summary>
-        /// Start.
-        /// </summary>
         protected virtual void Start(){}
-
-        /// <summary>
-        /// Update.
-        /// </summary>
         protected virtual void Update(){}
-
-        /// <summary>
-        /// Late Update.
-        /// </summary>
         protected virtual void LateUpdate(){}
 
         #endregion
         
         #region GETTERS
-
-        /// <summary>
-        /// Returns the player character's main camera.
-        /// </summary>
-        public abstract Camera GetCameraWorld();
         
-        /// <summary>
-        /// Returns a reference to the Inventory component.
-        /// </summary>
+        public abstract int GetShotsFired();
+        public abstract bool IsLowered();
+        public abstract Camera GetCameraWorld();
+        public abstract Camera GetCameraDepth();
+        
+        
+        
+        
         public abstract InventoryBehaviour GetInventory();
 
-        /// <summary>
-        /// Returns true if the Crosshair should be visible.
-        /// </summary>
-        public abstract bool IsCrosshairVisible();
-        /// <summary>
-        /// Returns true if the character is running.
-        /// </summary>
+        
+        
+        
+        public abstract int GetGrenadesCurrent();
+        
+        
+        
+        public abstract int GetGrenadesTotal();
+
+        
+        
+        
         public abstract bool IsRunning();
         
-        /// <summary>
-        /// Returns true if the character is aiming.
-        /// </summary>
+        
+        
+        public abstract bool IsHolstered();
+
+        
+        
+        
+        public abstract bool IsCrouching();
+        
+        
+        
+        public abstract bool IsReloading();
+
+        
+        
+        
+        public abstract bool IsThrowingGrenade();
+        
+        
+        
+        public abstract bool IsMeleeing();
+        
+        
+        
+        
         public abstract bool IsAiming();
-        /// <summary>
-        /// Returns true if the game cursor is locked.
-        /// </summary>
+        
+        
+        
         public abstract bool IsCursorLocked();
 
-        /// <summary>
-        /// Returns true if the tutorial text should be visible on the screen.
-        /// </summary>
+        
+        
+        
         public abstract bool IsTutorialTextVisible();
 
-        /// <summary>
-        /// Returns the Movement Input.
-        /// </summary>
+        
+        
+        
         public abstract Vector2 GetInputMovement();
-        /// <summary>
-        /// Returns the Look Input.
-        /// </summary>
+        
+        
+        
         public abstract Vector2 GetInputLook();
+
+        
+        
+        
+        public abstract AudioClip[] GetAudioClipsGrenadeThrow();
+        
+        
+        
+        public abstract AudioClip[] GetAudioClipsMelee();
+        
+        
+        
+        
+        public abstract bool IsInspecting();
+        
+        
+        
+        
+        public abstract bool IsHoldingButtonFire();
         
         #endregion
 
         #region ANIMATION
 
-        /// <summary>
-        /// Ejects a casing from the equipped weapon.
-        /// </summary>
+        
+        
+        
         public abstract void EjectCasing();
-        /// <summary>
-        /// Fills the character's equipped weapon's ammunition by a certain amount, or fully if set to -1.
-        /// </summary>
+        
+        
+        
         public abstract void FillAmmunition(int amount);
 
-        /// <summary>
-        /// Sets the equipped weapon's magazine to be active or inactive!
-        /// </summary>
+        
+        
+        
+        public abstract void Grenade();
+        
+        
+        
         public abstract void SetActiveMagazine(int active);
         
-        /// <summary>
-        /// Reload Animation Ended.
-        /// </summary>
+        
+        
+        
+        public abstract void AnimationEndedBolt();
+        
+        
+        
         public abstract void AnimationEndedReload();
 
-        /// <summary>
-        /// Inspect Animation Ended.
-        /// </summary>
+        
+        
+        
+        public abstract void AnimationEndedGrenadeThrow();
+        
+        
+        
+        public abstract void AnimationEndedMelee();
+
+        
+        
+        
         public abstract void AnimationEndedInspect();
-        /// <summary>
-        /// Holster Animation Ended.
-        /// </summary>
+        
+        
+        
         public abstract void AnimationEndedHolster();
+
+        
+        
+        
+        public abstract void SetSlideBack(int back);
+
+        public abstract void SetActiveKnife(int active);
 
         #endregion
     }

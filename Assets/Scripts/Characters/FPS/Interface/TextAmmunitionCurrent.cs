@@ -1,4 +1,4 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿//Copyright 2022, Infima Games. All Rights Reserved.
 
 using UnityEngine;
 using System.Globalization;
@@ -12,7 +12,7 @@ namespace LF.LongForgotten.Interface
     {
         #region FIELDS SERIALIZED
         
-        [Header("Colors")]
+        [Title(label: "Colors")]
         
         [Tooltip("Determines if the color of the text should changes as ammunition is fired.")]
         [SerializeField]
@@ -36,9 +36,9 @@ namespace LF.LongForgotten.Interface
         protected override void Tick()
         {
             //Current Ammunition.
-            float current = equippedWeapon.GetAmmunitionCurrent();
+            float current = equippedWeaponBehaviour.GetAmmunitionCurrent();
             //Total Ammunition.
-            float total = equippedWeapon.GetAmmunitionTotal();
+            float total = equippedWeaponBehaviour.GetAmmunitionTotal();
             
             //Update Text.
             textMesh.text = current.ToString(CultureInfo.InvariantCulture);

@@ -1,4 +1,4 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿//Copyright 2022, Infima Games. All Rights Reserved.
 
 using UnityEngine;
 
@@ -11,7 +11,7 @@ namespace LF.LongForgotten
     {
         #region FIELDS SERIALIZED
         
-        [Header("Settings")]
+        [Title(label: "Settings")]
         
         [Tooltip("Sensitivity when looking around.")]
         [SerializeField]
@@ -20,6 +20,8 @@ namespace LF.LongForgotten
         [Tooltip("Minimum and maximum up/down rotation angle the camera can have.")]
         [SerializeField]
         private Vector2 yClamp = new Vector2(-60, 60);
+        
+        [Title(label: "Interpolation")]
 
         [Tooltip("Should the look rotation be interpolated?")]
         [SerializeField]
@@ -54,21 +56,23 @@ namespace LF.LongForgotten
         #endregion
         
         #region UNITY
-
-        private void Awake()
-        {
-            //Get Player Character.
-            playerCharacter = ServiceLocator.Current.Get<IGameModeService>().GetPlayerCharacter();
-            //Cache the rigidbody.
-            playerCharacterRigidbody = playerCharacter.GetComponent<Rigidbody>();
-        }
+        
+        /// <summary>
+        /// Start.
+        /// </summary>
         private void Start()
         {
+            //Get Player Character.
+            playerCharacter = ServiceLocator.Current.Get<IGameModeService>().GetPlayerCharacter();       
+            
             //Cache the character's initial rotation.
             rotationCharacter = playerCharacter.transform.localRotation;
             //Cache the camera's initial rotation.
             rotationCamera = transform.localRotation;
         }
+        /// <summary>
+        /// LateUpdate.
+        /// </summary>
         private void LateUpdate()
         {
             //Frame Input. The Input to add this frame!
@@ -83,6 +87,7 @@ namespace LF.LongForgotten
             
             //Save rotation. We use this for smooth rotation.
             rotationCamera *= rotationPitch;
+            rotationCamera = Clamp(rotationCamera);
             rotationCharacter *= rotationYaw;
             
             //Local Rotation.
@@ -91,10 +96,12 @@ namespace LF.LongForgotten
             //Smooth.
             if (smooth)
             {
-                //Interpolate local rotation.
+                // Interpolate local rotation.
                 localRotation = Quaternion.Slerp(localRotation, rotationCamera, Time.deltaTime * interpolationSpeed);
+                //Clamp.
+                localRotation = Clamp(localRotation);
                 //Interpolate character rotation.
-                playerCharacterRigidbody.MoveRotation(Quaternion.Slerp(playerCharacterRigidbody.rotation, rotationCharacter, Time.deltaTime * interpolationSpeed));
+                playerCharacter.transform.rotation = Quaternion.Slerp(playerCharacter.transform.rotation, rotationCharacter, Time.deltaTime * interpolationSpeed);
             }
             else
             {
@@ -104,7 +111,7 @@ namespace LF.LongForgotten
                 localRotation = Clamp(localRotation);
 
                 //Rotate character.
-                playerCharacterRigidbody.MoveRotation(playerCharacterRigidbody.rotation * rotationYaw);
+                playerCharacter.transform.rotation *= rotationYaw;
             }
             
             //Set.

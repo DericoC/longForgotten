@@ -1,4 +1,4 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+﻿//Copyright 2022, Infima Games. All Rights Reserved.
 
 using UnityEngine;
 
@@ -14,17 +14,23 @@ namespace LF.LongForgotten
         /// </summary>
         private enum SoundType
         {
+            //Character Actions.
+            GrenadeThrow, Melee,
             //Holsters.
             Holster, Unholster,
             //Normal Reloads.
             Reload, ReloadEmpty,
+            //Cycled Reloads.
+            ReloadOpen, ReloadInsert, ReloadClose,
             //Firing.
             Fire, FireEmpty,
+            //Bolt.
+            BoltAction
         }
 
         #region FIELDS SERIALIZED
 
-        [Header("Setup")]
+        [Title(label: "Setup")]
         
         [Tooltip("Delay at which the audio is played.")]
         [SerializeField]
@@ -34,7 +40,7 @@ namespace LF.LongForgotten
         [SerializeField]
         private SoundType soundType;
         
-        [Header("Audio Settings")]
+        [Title(label: "Audio Settings")]
 
         [Tooltip("Audio Settings.")]
         [SerializeField]
@@ -86,6 +92,11 @@ namespace LF.LongForgotten
             //Switch.
             AudioClip clip = soundType switch
             {
+                //Grenade Throw.
+                SoundType.GrenadeThrow => playerCharacter.GetAudioClipsGrenadeThrow().GetRandom(),
+                //Melee.
+                SoundType.Melee => playerCharacter.GetAudioClipsMelee().GetRandom(),
+                
                 //Holster.
                 SoundType.Holster => weaponBehaviour.GetAudioClipHolster(),
                 //Unholster.
@@ -96,10 +107,20 @@ namespace LF.LongForgotten
                 //Reload Empty.
                 SoundType.ReloadEmpty => weaponBehaviour.GetAudioClipReloadEmpty(),
                 
+                //Reload Open.
+                SoundType.ReloadOpen => weaponBehaviour.GetAudioClipReloadOpen(),
+                //Reload Insert.
+                SoundType.ReloadInsert => weaponBehaviour.GetAudioClipReloadInsert(),
+                //Reload Close.
+                SoundType.ReloadClose => weaponBehaviour.GetAudioClipReloadClose(),
+                
                 //Fire.
                 SoundType.Fire => weaponBehaviour.GetAudioClipFire(),
                 //Fire Empty.
                 SoundType.FireEmpty => weaponBehaviour.GetAudioClipFireEmpty(),
+                
+                //Bolt Action.
+                SoundType.BoltAction => weaponBehaviour.GetAudioClipBoltAction(),
                 
                 //Default.
                 _ => default
