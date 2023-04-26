@@ -142,7 +142,13 @@ public class GasTankScript : MonoBehaviour {
 				//Toggle explode bool on explosive barrel object
 				hit.transform.gameObject.GetComponent<ExplosiveBarrelScript>().explode = true;
 			}
-		}
+            //If the explosion hit the tag "Zombie"
+            if (hit.transform.tag == "Zombie")
+            {
+                //Toggle the isHit bool on the target object
+                hit.transform.gameObject.GetComponent<Target>().isExploded = true;
+            }
+        }
 		
 		//Spawn the explosion prefab
 		Instantiate (explosionPrefab, transform.position, 

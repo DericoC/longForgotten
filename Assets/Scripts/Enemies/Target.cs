@@ -9,6 +9,8 @@ public class Target : MonoBehaviour {
 
     public int health = 100;
     public bool isHit = false;
+    public bool isShot = false;
+    public bool isExploded = false;
     public bool isDead = false;
 
     [Header("Protection")]
@@ -43,6 +45,15 @@ public class Target : MonoBehaviour {
                 if (isHit == true)
                 {
                     Damage(Random.Range(10,30));
+                }
+                if (isShot == true)
+                {
+                    Damage(Random.Range(30, 50));
+
+                }
+                if (isExploded == true)
+                {
+                    Damage(Random.Range(80, 100));
                 }
         } else {
             navcontroller.triggerDead();
