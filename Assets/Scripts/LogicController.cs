@@ -67,6 +67,7 @@ public class LogicController : MonoBehaviour
     }
 
     public void gameOver() {
+        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         characterCanvas.SetActive(false);
         player.CursorLocked = false;

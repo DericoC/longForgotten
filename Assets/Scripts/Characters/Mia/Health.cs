@@ -10,8 +10,8 @@ public class Health : MonoBehaviour
     [SerializeField] bool _protected = false;
     [SerializeField] float protectedTime = 0.5f;
     [SerializeField] AudioClip[] hurtSounds;
+    [SerializeField] AudioSource audioSource;
     private bool soundPlaying = false;
-    private AudioSource audioSource;
     private LF.LongForgotten.Character player;
     private LogicController logicController;
     public static bool dead = false;
@@ -20,7 +20,6 @@ public class Health : MonoBehaviour
     {
         logicController = GameObject.FindWithTag("Logic").GetComponent<LogicController>();
         player = GameObject.FindWithTag("Player").GetComponent<LF.LongForgotten.Character>();
-        audioSource = player.GetComponent<AudioSource>();
         Time.timeScale = 1;
     }
 
@@ -59,7 +58,7 @@ public class Health : MonoBehaviour
         {
             lives -= damage;
             if (!soundPlaying) {
-                StartCoroutine(hurtSound());
+                StartCoroutine("hurtSound");
             }
             StartCoroutine(Protect());
         }
@@ -72,8 +71,10 @@ public class Health : MonoBehaviour
 
     IEnumerator hurtSound() {
         soundPlaying = true;
-        audioSource.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], 0.8f);
-        yield return new WaitForSeconds(2f);
+        AudioClip sound = hurtSounds[Random.Range(0, hurtSounds.Length)];
+        audioSource.clip = sound;
+        audioSource.Play();
+        yield return new WaitForSeconds(sound.length + 0.5f);
         soundPlaying = false;
     }
 
