@@ -4176,7 +4176,6 @@ MonoBehaviour:
   lives: 5
   _protected: 0
   protectedTime: 0.5
-  gameOverPanel: {fileID: 1949634156}
   hurtSounds:
   - {fileID: 8300000, guid: 8a1ae77a49d2b44efbbc0c5c6510b49a, type: 3}
   - {fileID: 8300000, guid: 6ce4706dd0a6842a687553833f8341cb, type: 3}
@@ -6404,6 +6403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1018718716}
+  gameOverPanel: {fileID: 1949634156}
 --- !u!4 &1623238269
 Transform:
   m_ObjectHideFlags: 0

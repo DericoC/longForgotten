@@ -9,8 +9,8 @@ public class Health : MonoBehaviour
     [SerializeField] int lives = 5;
     [SerializeField] bool _protected = false;
     [SerializeField] float protectedTime = 0.5f;
-    [SerializeField] GameObject gameOverPanel;
     [SerializeField] AudioClip[] hurtSounds;
+    private bool soundPlaying = false;
     private AudioSource audioSource;
     private LF.LongForgotten.Character player;
     private LogicController logicController;
@@ -44,16 +44,12 @@ public class Health : MonoBehaviour
         {
             dead = false;
             GetComponent<PlayerInput>().enabled = true;
-            gameOverPanel.SetActive(false);
         }
         else if (lives == 0)
         {
             dead = true;
             GetComponent<PlayerInput>().enabled = false;
-            gameOverPanel.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;
-            player.CursorLocked = false;
-            Time.timeScale = 0;
+            logicController.gameOver();
         }
     }
 
@@ -62,7 +58,9 @@ public class Health : MonoBehaviour
         if (!_protected && lives > 0)
         {
             lives -= damage;
-            hurtSound();
+            if (!soundPlaying) {
+                StartCoroutine(hurtSound());
+            }
             StartCoroutine(Protect());
         }
     }
@@ -72,8 +70,11 @@ public class Health : MonoBehaviour
         return lives;
     }
 
-    private void hurtSound() {
+    IEnumerator hurtSound() {
+        soundPlaying = true;
         audioSource.PlayOneShot(hurtSounds[Random.Range(0, hurtSounds.Length)], 0.8f);
+        yield return new WaitForSeconds(2f);
+        soundPlaying = false;
     }
 
     IEnumerator Protect()

@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class LogicController : MonoBehaviour
 {
     [SerializeField] GameObject pauseMenu;
+    [SerializeField] GameObject gameOverPanel;
     private LF.LongForgotten.Character player;
     private GameObject characterCanvas;
     private bool pause;
@@ -62,6 +64,15 @@ public class LogicController : MonoBehaviour
         pause = false;
         Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void gameOver() {
+        Cursor.lockState = CursorLockMode.None;
+        characterCanvas.SetActive(false);
+        player.CursorLocked = false;
+        Time.timeScale = 0;
+        pause = true;
+        gameOverPanel.SetActive(true);
     }
 
     //Getter / Setter

@@ -6,20 +6,22 @@ using UnityEngine;
 
 public class FindMissingScripts : MonoBehaviour
 {
-    [MenuItem("Help/Find Missing Scripts")]
+    //Comment to compile game
 
-    static void findMissing() {
-        string[] prefabPaths = AssetDatabase.GetAllAssetPaths().Where(prefabPaths => prefabPaths.EndsWith(".prefab", System.StringComparison.OrdinalIgnoreCase)).ToArray();
+    //[MenuItem("Help/Find Missing Scripts")]
 
-        foreach(string path in prefabPaths) {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+    //static void findMissing() {
+    //    string[] prefabPaths = AssetDatabase.GetAllAssetPaths().Where(prefabPaths => prefabPaths.EndsWith(".prefab", System.StringComparison.OrdinalIgnoreCase)).ToArray();
 
-            foreach(Component com in prefab.GetComponentsInChildren<Component>()) {
-                if (com == null) {
-                    Debug.Log("FOUND: " + path, prefab);
-                    break;
-                }
-            }
-        }
-    }
+    //    foreach(string path in prefabPaths) {
+    //        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+
+    //        foreach(Component com in prefab.GetComponentsInChildren<Component>()) {
+    //            if (com == null) {
+    //                Debug.Log("FOUND: " + path, prefab);
+    //                break;
+    //            }
+    //        }
+    //    }
+    //}
 }
