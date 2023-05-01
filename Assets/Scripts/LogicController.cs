@@ -16,6 +16,7 @@ public class LogicController : MonoBehaviour
     {
         characterCanvas = GameObject.FindWithTag("PlayerGUI");
         player = GameObject.FindWithTag("Player").GetComponent<LF.LongForgotten.Character>();
+        GameObject.FindWithTag("ScoreController").GetComponent<ScoreController>().resetScoreController();
     }
 
     private void Update()

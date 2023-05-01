@@ -135,7 +135,7 @@ namespace LF.LongForgotten
 
         private bool[] keys;
         private bool isPressingDoorOpen = false; private bool aiming; private bool wasAiming; private bool running; private bool holstered;
-        private bool gunUnlocked = false;
+        private bool gunUnlocked = false; private bool rifleUnlocked = false;
         private float lastShotTime;
         private int layerOverlay; private int layerHolster; private int layerActions;
         private ScoreController scoreController;
@@ -235,28 +235,24 @@ namespace LF.LongForgotten
             UpdateAnimator();
             DoorController();
 
-            if (!gunUnlocked && scoreController.HasUnlockedGun) {
+            if (!gunUnlocked && scoreController.HasUnlockedGun) //Unlock Uzi Weapon
+            {
                 gunUnlocked = true;
                 StartCoroutine(nameof(Equip), 1);
             }
 
+            if (!rifleUnlocked && scoreController.HasUnlockedRifle) //Unlock AR Weapon
+            {
+                rifleUnlocked = true;
+                StartCoroutine(nameof(Equip), 2);
+            }
 
             aimingAlpha = characterAnimator.GetFloat(AHashes.AimingAlpha);
-
-
             crouchingAlpha = Mathf.Lerp(crouchingAlpha, movementBehaviour.IsCrouching() ? 1.0f : 0.0f, Time.deltaTime * 12.0f);
-
             runningAlpha = Mathf.Lerp(runningAlpha, running ? 1.0f : 0.0f, Time.deltaTime * runningInterpolationSpeed);
-
-
             float runningFieldOfView = Mathf.Lerp(1.0f, fieldOfViewRunningMultiplier, runningAlpha);
-
-
             cameraWorld.fieldOfView = Mathf.Lerp(fieldOfView, fieldOfView * equippedWeapon.GetFieldOfViewMultiplierAim(), aimingAlpha) * runningFieldOfView;
-
             cameraDepth.fieldOfView = Mathf.Lerp(fieldOfViewWeapon, fieldOfViewWeapon * equippedWeapon.GetFieldOfViewMultiplierAimWeapon(), aimingAlpha);
-
-
             wasAiming = aiming;
         }
 
@@ -966,28 +962,22 @@ namespace LF.LongForgotten
                 return;
 
 
-            if (scoreController.Score >= 1500)
+            if (SpawnerController.currentRound >= 3) //Unlock Weapon Inventory
             {
                 switch (context)
                 {
-
                     case { phase: InputActionPhase.Performed }:
 
-
                         float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2)) ? Mathf.Sign(context.ReadValue<Vector2>().y) : 1.0f;
-
-
                         int indexNext = scrollValue > 0 ? inventory.GetNextIndex() : inventory.GetLastIndex();
-
                         int indexCurrent = inventory.GetEquippedIndex();
-
 
                         if (CanChangeWeapon() && (indexCurrent != indexNext))
                             StartCoroutine(nameof(Equip), indexNext);
                         break;
                 }
             }
-    }
+        }
 
         public void OnLockCursor(InputAction.CallbackContext context)
         {

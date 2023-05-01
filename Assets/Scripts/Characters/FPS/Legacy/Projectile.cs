@@ -132,7 +132,7 @@ namespace LF.LongForgotten.Legacy
 			if (collision.transform.tag == "Zombie") {
                 // Instantiate random impact prefab from array
                 Instantiate(bloodImpactPrefabs[Random.Range(0, bloodImpactPrefabs.Length)], transform.position, Quaternion.LookRotation(collision.contacts[0].normal));
-                collision.transform.gameObject.GetComponent<Target>().isHit = true;
+                collision.transform.gameObject.GetComponent<Target>().isShot = true;
             }
 
 			//If bullet collides with "ExplosiveBarrel" tag

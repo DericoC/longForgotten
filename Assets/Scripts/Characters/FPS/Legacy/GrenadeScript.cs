@@ -38,7 +38,10 @@ namespace LF.LongForgotten.Legacy
 		[Header("Audio")]
 		public AudioSource impactSound;
 
-		private void Awake()
+        [Header("Impact Effect Prefabs")]
+        public Transform[] bloodImpactPrefabs;
+
+        private void Awake()
 		{
 			//Generate random throw force
 			//based on min and max values
@@ -121,6 +124,11 @@ namespace LF.LongForgotten.Legacy
 					//Reduce explosion timer on gas tank object to make it explode faster
 					hit.gameObject.GetComponent<GasTankScript>().explosionTimer = 0.05f;
 				}
+
+				if (hit.GetComponent<Collider>().tag == "Zombie") {
+                    Instantiate(bloodImpactPrefabs[Random.Range(0, bloodImpactPrefabs.Length)], transform.position, Quaternion.identity);
+                    hit.gameObject.GetComponent<Target>().isExploded = true;
+                }
 			}
 
 			//Destroy the grenade object on explosion

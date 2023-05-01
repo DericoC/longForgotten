@@ -56,7 +56,10 @@ namespace LF.LongForgotten.Legacy
 		         "before destroying object")]
 		public float destroyDelay;
 
-		private void Start()
+        [Header("Impact Effect Prefabs")]
+        public Transform[] bloodImpactPrefabs;
+
+        private void Start()
 		{
 			//If not using constant force (grenade launcher projectile)
 			if (!useConstantForce)
@@ -223,7 +226,13 @@ namespace LF.LongForgotten.Legacy
 					hit.gameObject.GetComponent<GasTankScript>().isHit = true;
 					hit.gameObject.GetComponent<GasTankScript>().explosionTimer = 0.05f;
 				}
-			}
+
+                if (hit.GetComponent<Collider>().tag == "Zombie")
+                {
+                    Instantiate(bloodImpactPrefabs[Random.Range(0, bloodImpactPrefabs.Length)], transform.position, Quaternion.identity);
+                    hit.gameObject.GetComponent<Target>().isRPG = true;
+                }
+            }
 		}
 	}
 }

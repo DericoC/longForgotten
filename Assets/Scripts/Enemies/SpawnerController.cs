@@ -7,24 +7,23 @@ public class SpawnerController : MonoBehaviour
 
     public GameObject[] enemyPrefabs; // array of enemy prefabs to spawn
     public float spawnRadius = 50f; // maximum distance from the player to spawn enemies
-    public int maxEnemiesPerSpawner = 3; // maximum number of enemies to spawn per spawner
+    public int maxEnemiesPerSpawner = 1; // maximum number of enemies to spawn per spawner
     public float spawnDelay = 10f; // delay between spawns of the same spawner
     public float roundDelay = 10f; // delay between rounds
-    private int currentRound = 1; // current round number
+    public static int currentRound; // current round number
 
     private GameObject[] spawners; // array of game objects with the "ZombieSpawner" tag
     private GameObject player; // reference to the player object
+    public static int zombies;
+    private bool roundStarted;
 
     private void Start()
     {
-        // find all game objects with the "ZombieSpawner" tag
+        currentRound = 1;
+        zombies = 0;
         spawners = GameObject.FindGameObjectsWithTag("Spawner");
-
-        // get a reference to the player object
         player = GameObject.FindGameObjectWithTag("Player");
-
-        // start the first round
-        StartCoroutine(SpawnEnemiesWithDelay());
+        StartCoroutine(SpawnEnemiesWithDelay(true));
     }
 
     private void Update()
@@ -33,17 +32,24 @@ public class SpawnerController : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
     }
 
-    private IEnumerator SpawnEnemiesWithDelay()
+    private void FixedUpdate()
     {
-        // wait for the specified round delay before starting the round
-        yield return new WaitForSeconds(roundDelay);
+        if (roundStarted) {
+            roundEndChecker();
+        }
+    }
 
-        // loop through each spawner and check if it's within the spawn radius of the player
+    private IEnumerator SpawnEnemiesWithDelay(bool firstRound)
+    {
+        roundStarted = false;
+        int maxZombieRound = maxPerRound();
+        bool maxReached = false;
+
+        yield return new WaitForSeconds(firstRound ? 2f : roundDelay);
         foreach (GameObject spawner in spawners)
         {
             if (Vector3.Distance(spawner.transform.position, player.transform.position) <= spawnRadius)
             {
-                // spawn up to maxEnemiesPerSpawner enemies at the spawner's position
                 for (int i = 0; i < maxEnemiesPerSpawner; i++)
                 {
                     // get a random index for the enemy prefab array
@@ -51,33 +57,42 @@ public class SpawnerController : MonoBehaviour
 
                     // spawn a random enemy prefab at the spawner's position
                     Instantiate(enemyPrefabs[randomIndex], spawner.transform.position, Quaternion.identity);
+                    zombies++;
+
+                    if (zombies == maxZombieRound) {
+                        maxReached = true;
+                        break;
+                    }
 
                     // wait for the specified spawn delay before spawning the next enemy
-                    yield return StartCoroutine(SpawnDelay(spawnDelay));
+                    yield return StartCoroutine(SpawnDelay(1.5f));
                 }
             }
+
+            if (maxReached)
+            {
+                break;
+            }
         }
+        roundStarted = true;
+    }
 
-        // wait until all enemies are killed before starting the next round
-        while (GameObject.FindWithTag("Zombie") != null)
-        {
-            yield return null;
+    private void roundEndChecker() {
+        if (zombies == 0) {
+            currentRound++;
+            DifficultyIncrease();
+            StartCoroutine(SpawnEnemiesWithDelay(false));
         }
-
-        // increment the current round
-        currentRound++;
-        Debug.Log(currentRound);
-        //increase difficulty
-        DifficultyIncrease();
-
-        // start the next round
-        StartCoroutine(SpawnEnemiesWithDelay());
     }
 
     private void DifficultyIncrease()
     {
-        //increase the amount of zombies spawning per spawner each round
-        maxEnemiesPerSpawner = currentRound * maxEnemiesPerSpawner;
+        maxEnemiesPerSpawner++;
+    }
+
+    private int maxPerRound() {
+        int max = System.Convert.ToInt32(Mathf.Floor((maxEnemiesPerSpawner * spawners.Length) / 3.5f));
+        return max;
     }
 
     private IEnumerator SpawnDelay(float delay)

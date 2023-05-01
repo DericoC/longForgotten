@@ -12,6 +12,7 @@ public class Target : MonoBehaviour {
     public bool isShot = false;
     public bool isExploded = false;
     public bool isDead = false;
+    public bool isRPG = false;
 
     [Header("Protection")]
     public float protectionTime;
@@ -44,16 +45,19 @@ public class Target : MonoBehaviour {
         if (!isDead) {
                 if (isHit == true)
                 {
-                    Damage(Random.Range(10,30));
+                    Damage(Random.Range(5,10));
                 }
                 if (isShot == true)
                 {
-                    Damage(Random.Range(30, 50));
-
+                    Damage(Random.Range(10, 30));
                 }
                 if (isExploded == true)
                 {
                     Damage(Random.Range(80, 100));
+                }
+                if (isRPG == true)
+                {
+                    Damage(Random.Range(95, 100));
                 }
         } else {
             navcontroller.triggerDead();
@@ -119,6 +123,7 @@ public class Target : MonoBehaviour {
         {
             isDead = true;
             health = 0;
+            SpawnerController.zombies--;
         }
         isHit = false;
         UpdatePlayerScore(Amount);
